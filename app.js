@@ -2,7 +2,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         var checkPageButton = document.getElementById('checkPage');
         checkPageButton.addEventListener('click', function () {
-            alert('yay');
+            alert('hi');
 
             chrome.tabs.getSelected(null, function (tab) {
                 d = document;
@@ -20,5 +20,3 @@
             });
         }, false);
     }, false);
-    
-
