@@ -7,9 +7,11 @@ for (var i = 0; i < elementsArray.length; i++) {
 };
 
 textToSpeechAjax("hey", function(response){
-    var binaryData = [];
-    binaryData.push(response);
-    var objectUrl = URL.createObjectURL(new Blob(response));
+    for (var i = 0; i < response.length; i++) {
+        console.log(i + ": " + response[i]);
+    }
+
+    var objectUrl = URL.createObjectURL(response);
     var audio = new Audio(objectUrl);
     audio.play();
 });
@@ -21,8 +23,7 @@ function textToSpeechAjax(text, callback) {
         method: "GET",
         headers: {
             "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
-            "output": "speech.wav",
-            "dataType": "binary"
+            "output": "speech.wav"
         }
     }).then(function (response) {
         callback(response);
