@@ -6,12 +6,6 @@
         }, false);
     }, false);
 
-    if (jQuery) {  
-        alert("jquery loaded");
-    } else {
-        // jQuery not loaded
-    }
-
     $(document).ready(function() { 
         $("#checkPage").on("click", function() {
            alert("YAY!"); 

@@ -6,28 +6,25 @@ for (var i = 0; i < elementsArray.length; i++) {
     });
 };
 
-console.log("oi");
-
-textToSpeech("hey", function(response){
-    console.log(response);
+textToSpeechAjax("hey", function(response){
+    var binaryData = [];
+    binaryData.push(response);
+    var objectUrl = URL.createObjectURL(new Blob(response));
+    var audio = new Audio(objectUrl);
+    audio.play();
 });
 
-function textToSpeech(text, callback) {
-    console.log("1");
-    var xmlHttp = new XMLHttpRequest();
+function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&text=" + text + "&voice=en-US_AllisonVoice"
-    xmlHttp.onreadystatechange = function () {
-        console.log("3");
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            callback(xmlHttp.responseText);
-        } else {
-            console.log("2");
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
+            "output": "speech.wav",
+            "dataType": "binary"
         }
-    }
-    xmlHttp.open("GET", url, true); // true for asynchronous
-    xmlHttp.setRequestHeader("Authorization", "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==");
-    xmlHttp.setRequestHeader("output", "speech.wav");
-    console.log("4");
-    xmlHttp.send(null);
-    console.log("5");
-};
+    }).then(function (response) {
+        callback(response);
+    });
+}
