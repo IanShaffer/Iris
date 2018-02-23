@@ -12,9 +12,12 @@ textToSpeechAjax("hey", function(response){
     console.log(blob);
     var objectUrl = URL.createObjectURL(blob);
     console.log(objectUrl);
-    var audio = new Audio(objectUrl);
+    var chromeUrl = chrome.runtime.getURL("response.wav");
+    console.log(chromeUrl);
+    var audio = new Audio(chromeUrl);
+    $("#uploadingText").append(audio);
+    console.log("BOOO");
     audio.play();
-
 });
 
 function textToSpeechAjax(text, callback) {
@@ -25,8 +28,7 @@ function textToSpeechAjax(text, callback) {
         method: "GET",
         headers: {
             "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
-            "output": "speech.wav",
-            "content-type": "binary"
+            "output": "speech.wav"
         }
     }).then(function (response) {
         callback(response);
