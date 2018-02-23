@@ -5,3 +5,9 @@
             alert('test');
         }, false);
     }, false);
+
+    $(document).ready(function() { 
+        $("#checkPage").on("click", function() {
+           alert("YAY!"); 
+        });
+    }); 
