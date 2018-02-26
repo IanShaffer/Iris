@@ -31,10 +31,6 @@ var languages = {
     }
 };
 
-detectLanguageAjax(function (response) {
-    console.log(response);
-});
-
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
