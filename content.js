@@ -67,16 +67,41 @@ for (var i = 0; i < elementsArray.length; i++) {
         {
             case "INPUT":
                 value = element.value;
-                break;  
-            case "DIV", "TR", "TD", "A", "P":
-                value = element.innerText;
+                value += " " + element.getAttribute;
                 break;
-            default: 
-                value = element.textContent;  
+            default:
+                value = element.innerText;
+                console.log(element.nodeName);
+                value += " " + element.nodeName;
             
         }
        // console.log($(value));var stringOfHtml = "<p></p><script>alert('fail');</scr" + "ipt><span></span>";
         console.log(value); 
+        // crap
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                textToSpeechAjax(value, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    audio.play();
+                });
+                // if not English
+            } else {
+                translateAjax(value, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    textToSpeechAjax(spanishText, function (response) {
+                        var blob = new Blob([response], { "type": "audio/wav" });
+                        var objectUrl = window.URL.createObjectURL(blob);
+                        audio.src = objectUrl;
+                        audio.play();
+                    });
+                });
+            }
+        });
+        // crap
     });
 
 }
