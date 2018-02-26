@@ -1,18 +1,43 @@
 var audio = new Audio();
-var chosenLanguageIndex = 1;
+var chosenLanguageIndex = 5;
 var chosenVoice = "es-ES_LauraVoice";
 var languages = [
+    {
+        language: "English",
+        modelId: undefined,
+        voice: "en-US_AllisonVoice"
+    },
     {
         language: "Spanish",
         modelId: "en-es-conversational",
         voice: "es-ES_LauraVoice"
     },
     {
+        language: "French",
+        modelId: "en-fr-conversational",
+        voice: "fr-FR_ReneeVoice"
+    },
+    {
+        language: "Portuguese",
+        modelId: "en-pt-conversational",
+        voice: "pt-BR_IsabelaVoice"
+    },
+    {
+        language: "German",
+        modelId: "en-de",
+        voice: "de-DE_BirgitVoice"
+    },
+    {
+        language: "Italian",
+        modelId: "en-it",
+        voice: "it-IT_FrancescaVoice"
+    },
+    {
         language: "Japanese",
         modelId: "en-ja",
         voice: "ja-JP_EmiVoice"
     },
-]
+];
 var chosenLanguage = languages[chosenLanguageIndex];
 
 getLanguageModelsAjax(function (modelsArray) {
@@ -24,16 +49,28 @@ var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
         var englishText = this.innerHTML
-        translateAjax(englishText, function (response) {
-            var spanishText = response.translations[0].translation;
-            textToSpeechAjax(spanishText, function (response) {
-                var blob = new Blob([response], { "type": "audio/wav" });
-                var objectUrl = window.URL.createObjectURL(blob);
-                audio.src = objectUrl;
-                audio.play();
+        // if English
+        if (!chosenLanguage.modelId) {
+                textToSpeechAjax(englishText, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    audio.play();
             });
-            console.log("English: " + englishText + " | Translation: " + spanishText);
-        });
+            console.log("English: " + englishText + " | Translation: None");
+        // if not English
+        } else {
+            translateAjax(englishText, function (response) {
+                var spanishText = response.translations[0].translation;
+                textToSpeechAjax(spanishText, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    audio.play();
+                });
+                console.log("English: " + englishText + " | Translation: " + spanishText);
+            });
+        }
     });
 };
 
