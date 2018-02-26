@@ -1,0 +1,36 @@
+html {
+    height: 500px;
+    width: 400px;
+}
+
+body {
+    background-color: rgb(217, 236, 218);
+}
+
+.row {
+    text-align: center;
+    position: relative;
+    display: block;
+}
+
+.iris {
+    font-family: 'Shrikhand', cursive;
+    color: rgb(80, 127, 113);
+    text-align: center;
+    font-size: 35px;
+}
+
+.languages {
+}
+
+.single-language {
+    margin-bottom: 10px;
+    color: rgb(80, 127, 113);
+    font-size: 18px;
+    padding: 15px;
+}
+
+.single-language:hover {
+    background-color: rgb(80, 127, 113);
+    color: rgb(217, 236, 218);
+}
