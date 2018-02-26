@@ -11,44 +11,56 @@ for (var i = 0; i < elementsArray.length; i++) {
         });
         console.log(this.innerHTML);
     });
-};
+    elementsArray[i].addEventListener("mouseenter", function (e) {
+        var element = e.target;
+        if (element.textContent);
+            console.log(element.textContent); 
+    });
 
-$.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
+}
+
+
+$(document).on("hover", function(event){
+    console.log($(event.target).text());
+})
+
+
+
+$.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
-    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob)))))
-    {
+    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
         return {
             // create new XMLHttpRequest
-            send: function(headers, callback){
-		// setup all variables
+            send: function (headers, callback) {
+                // setup all variables
                 var xhr = new XMLHttpRequest(),
-		url = options.url,
-		type = options.type,
-		async = options.async || true,
-		// blob or arraybuffer. Default is blob
-		dataType = options.responseType || "blob",
-		data = options.data || null,
-		username = options.username || null,
-		password = options.password || null;
-					
-                xhr.addEventListener('load', function(){
-			var data = {};
-			data[options.dataType] = xhr.response;
-			// make callback and send data
-			callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
+                    url = options.url,
+                    type = options.type,
+                    async = options.async || true,
+                    // blob or arraybuffer. Default is blob
+                    dataType = options.responseType || "blob",
+                    data = options.data || null,
+                    username = options.username || null,
+                    password = options.password || null;
+
+                xhr.addEventListener('load', function () {
+                    var data = {};
+                    data[options.dataType] = xhr.response;
+                    // make callback and send data
+                    callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
                 });
 
                 xhr.open(type, url, async, username, password);
-				
-		// setup custom headers
-		for (var i in headers ) {
-			xhr.setRequestHeader(i, headers[i] );
-		}
-				
+
+                // setup custom headers
+                for (var i in headers) {
+                    xhr.setRequestHeader(i, headers[i]);
+                }
+
                 xhr.responseType = dataType;
                 xhr.send(data);
             },
-            abort: function(){
+            abort: function () {
                 jqXHR.abort();
             }
         };
