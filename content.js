@@ -2,6 +2,13 @@
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
+        textToSpeechAjax(this.innerHTML, function (response) {
+            var blob = new Blob([response], { "type": "audio/wav" });
+            var objectUrl = window.URL.createObjectURL(blob);
+            console.log(objectUrl);
+            var audio = new Audio(objectUrl);
+            audio.play();
+        });
         console.log(this.innerHTML);
     });
 };
@@ -49,13 +56,13 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
 });
 
 
-textToSpeechAjax("charlie is awesome", function(response){
-    var blob = new Blob([response], {"type": "audio/wav"});
-    var objectUrl = window.URL.createObjectURL(blob); 
-    console.log(objectUrl); 
-    var audio = new Audio(objectUrl);
-    audio.play();
-});
+// textToSpeechAjax("charlie is awesome", function(response){
+//     var blob = new Blob([response], {"type": "audio/wav"});
+//     var objectUrl = window.URL.createObjectURL(blob); 
+//     console.log(objectUrl); 
+//     var audio = new Audio(objectUrl);
+//     audio.play();
+// });
 
 function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&text=" + text + "&voice=en-US_AllisonVoice"
