@@ -31,10 +31,6 @@ var languages = {
     }
 };
 
-chrome.storage.sync.set({ 'language': 'spanish' }, function () {
-    console.log("set");
-});
-
 getLanguageModelsAjax(function (modelsArray) {
     var models = modelsArray;
     console.log(models);
@@ -43,11 +39,9 @@ getLanguageModelsAjax(function (modelsArray) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
+        var englishText = this.innerHTML
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
-            console.log(chosenLanguage);
-            console.log(languages[chosenLanguage]);
-            var englishText = this.innerHTML
             // if English
             if (!languages[chosenLanguage].modelId) {
                 textToSpeechAjax(englishText, function (response) {
@@ -56,7 +50,6 @@ for (var i = 0; i < elementsArray.length; i++) {
                     audio.src = objectUrl;
                     audio.play();
                 });
-                console.log("English: " + englishText + " | Translation: None");
                 // if not English
             } else {
                 translateAjax(englishText, function (response) {
@@ -67,7 +60,6 @@ for (var i = 0; i < elementsArray.length; i++) {
                         audio.src = objectUrl;
                         audio.play();
                     });
-                    console.log("English: " + englishText + " | Translation: " + spanishText);
                 });
             }
         });
