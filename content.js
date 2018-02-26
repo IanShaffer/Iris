@@ -3,19 +3,21 @@ var audio = new Audio();
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        textToSpeechAjax(this.innerHTML, function (response) {
-            var blob = new Blob([response], { "type": "audio/wav" });
-            var objectUrl = window.URL.createObjectURL(blob);
-            audio.src = objectUrl;
-            audio.play();
+        var englishText = this.innerHTML
+        translateAjax(englishText, function (response) {
+            var spanishText = response;
+            textToSpeechAjax(spanishText, function (response) {
+                var blob = new Blob([response], { "type": "audio/wav" });
+                var objectUrl = window.URL.createObjectURL(blob);
+                audio.src = objectUrl;
+                audio.play();
+            });
+            console.log("English: " + englishText + " | Spanish: " + spanishText);
         });
-        console.log(this.innerHTML);
     });
 };
 
-translateAjax("hello", function (response) {
-    console.log(response);
-});
+
 
 $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
     // check for conditions and support for blob / arraybuffer response type
@@ -85,7 +87,7 @@ function translateAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA=="
+            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg=="
         },
         data: {
             text: text
