@@ -7,14 +7,15 @@ for (var i = 0; i < elementsArray.length; i++) {
 };
 
 textToSpeechAjax("hey", function(response){
+
     console.log("hhh");
     var blob = new Blob([response]);
     console.log(blob);
     var objectUrl = URL.createObjectURL(blob);
     console.log(objectUrl);
-    var chromeUrl = chrome.runtime.getURL("response.wav");
-    console.log(chromeUrl);
-    var audio = new Audio(chromeUrl);
+    var chromeUrl = chrome.runtime.getURL("");
+    console.log("C: " + chromeUrl);
+    var audio = new Audio("chrome-extension://" + objectUrl);
     $("#uploadingText").append(audio);
     console.log("BOOO");
     audio.play();
