@@ -23,7 +23,7 @@ getLanguageModelsAjax(function (modelsArray) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
+        var englishText = this.innerHTML;
         translateAjax(englishText, function (response) {
             var spanishText = response.translations[0].translation;
             textToSpeechAjax(spanishText, function (response) {
@@ -32,23 +32,30 @@ for (var i = 0; i < elementsArray.length; i++) {
                 audio.src = objectUrl;
                 audio.play();
             });
-            console.log("English: " + englishText + " | Translation: " + spanishText);
+           // console.log("English: " + englishText + " | Translation: " + spanishText);
         });
     });
     elementsArray[i].addEventListener("mouseenter", function (e) {
         var element = e.target;
-        if (element.textContent);
-            console.log(element.textContent); 
+        var value = ""; 
+        //console.log(element.nodeName);
+        switch(element.nodeName)
+        {
+            case "INPUT":
+                value = element.value;
+                break;  
+            case "DIV", "TR", "TD", "A", "P":
+                value = element.innerText;
+                break;
+            default: 
+                value = element.textContent;  
+            
+        }
+       // console.log($(value));var stringOfHtml = "<p></p><script>alert('fail');</scr" + "ipt><span></span>";
+        console.log(value); 
     });
 
 }
-
-
-$(document).on("hover", function(event){
-    console.log($(event.target).text());
-})
-
-
 
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
