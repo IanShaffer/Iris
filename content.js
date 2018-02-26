@@ -1,19 +1,21 @@
 var audio = new Audio();
 
-
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
         textToSpeechAjax(this.innerHTML, function (response) {
             var blob = new Blob([response], { "type": "audio/wav" });
             var objectUrl = window.URL.createObjectURL(blob);
-            //var audio = new Audio(objectUrl);
             audio.src = objectUrl;
             audio.play();
         });
         console.log(this.innerHTML);
     });
 };
+
+translateAjax("hello", function (response) {
+    console.log(response);
+});
 
 $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
     // check for conditions and support for blob / arraybuffer response type
@@ -72,6 +74,22 @@ function textToSpeechAjax(text, callback) {
         },
         dataType: "binary",
         responseType: "arraybuffer"
+    }).then(function (response) {
+        callback(response);
+    });
+}
+
+function translateAjax(text, callback) {
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate?model_id=en-es"
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA=="
+        },
+        data: {
+            text: text
+        }
     }).then(function (response) {
         callback(response);
     });
