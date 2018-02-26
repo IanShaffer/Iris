@@ -1,44 +1,39 @@
 var audio = new Audio();
-var chosenLanguageIndex = 5;
-var chosenVoice = "es-ES_LauraVoice";
-var languages = [
-    {
-        language: "English",
+var chosenLanguage = "english";
+var languages = {
+    english: {
         modelId: undefined,
         voice: "en-US_AllisonVoice"
     },
-    {
-        language: "Spanish",
+    spanish: {
         modelId: "en-es-conversational",
         voice: "es-ES_LauraVoice"
     },
-    {
-        language: "French",
+    french: {
         modelId: "en-fr-conversational",
         voice: "fr-FR_ReneeVoice"
     },
-    {
-        language: "Portuguese",
+    portuguese: {
         modelId: "en-pt-conversational",
         voice: "pt-BR_IsabelaVoice"
     },
-    {
-        language: "German",
+    german: {
         modelId: "en-de",
         voice: "de-DE_BirgitVoice"
     },
-    {
-        language: "Italian",
+    italian: {
         modelId: "en-it",
         voice: "it-IT_FrancescaVoice"
     },
-    {
-        language: "Japanese",
+    japanese: {
         modelId: "en-ja",
         voice: "ja-JP_EmiVoice"
-    },
-];
-var chosenLanguage = languages[chosenLanguageIndex];
+    }
+};
+
+chrome.storage.sync.set({ 'language': 'spanish' }, function () {
+    console.log("set");
+});
 
 getLanguageModelsAjax(function (modelsArray) {
     var models = modelsArray;
@@ -48,29 +43,34 @@ getLanguageModelsAjax(function (modelsArray) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
-        // if English
-        if (!chosenLanguage.modelId) {
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            console.log(chosenLanguage);
+            console.log(languages[chosenLanguage]);
+            var englishText = this.innerHTML
+            // if English
+            if (!languages[chosenLanguage].modelId) {
                 textToSpeechAjax(englishText, function (response) {
                     var blob = new Blob([response], { "type": "audio/wav" });
                     var objectUrl = window.URL.createObjectURL(blob);
                     audio.src = objectUrl;
                     audio.play();
-            });
-            console.log("English: " + englishText + " | Translation: None");
-        // if not English
-        } else {
-            translateAjax(englishText, function (response) {
-                var spanishText = response.translations[0].translation;
-                textToSpeechAjax(spanishText, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
                 });
-                console.log("English: " + englishText + " | Translation: " + spanishText);
-            });
-        }
+                console.log("English: " + englishText + " | Translation: None");
+                // if not English
+            } else {
+                translateAjax(englishText, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    textToSpeechAjax(spanishText, function (response) {
+                        var blob = new Blob([response], { "type": "audio/wav" });
+                        var objectUrl = window.URL.createObjectURL(blob);
+                        audio.src = objectUrl;
+                        audio.play();
+                    });
+                    console.log("English: " + englishText + " | Translation: " + spanishText);
+                });
+            }
+        });
     });
 };
 
@@ -117,7 +117,7 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
 });
 
 function textToSpeechAjax(text, callback) {
-    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + chosenLanguage.voice;
+    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
         method: "GET",
@@ -147,7 +147,7 @@ function translateAjax(text, callback) {
         },
         data: {
             text: text,
-            model_id: chosenLanguage.modelId
+            model_id: languages[chosenLanguage].modelId
         }
     }).then(function (response) {
         callback(response);
