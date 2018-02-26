@@ -1,6 +1,6 @@
 html {
-    height: 500px;
-    width: 400px;
+    height: 200px;
+    width: 200px;
 }
 
 body {
@@ -15,12 +15,25 @@ body {
 
 .iris {
     font-family: 'Shrikhand', cursive;
-    color: rgb(80, 127, 113);
+    background-color: rgb(80, 127, 113);
+    color: rgb(217, 236, 218);
     text-align: center;
     font-size: 35px;
+    margin-bottom: 35px;
+}
+
+.languages.slate {
+
 }
 
 .languages {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 18px;
+    background-color: rgb(80, 127, 113);
+    color: #d9ecda;
+    border: 2pt rgb(80, 127, 113);
 }
 
 .single-language {
