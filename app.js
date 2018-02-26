@@ -1,4 +1,4 @@
-var languages = ['English', 'Spanish', 'French'];
+var languages = ['English', 'Spanish', 'French', 'Portguese', 'Italian', 'German', 'Japanese'];
 
 
 $(document).ready(function(){
