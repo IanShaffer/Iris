@@ -31,8 +31,8 @@ var languages = {
     }
 };
 
-getLanguageModelsAjax(function (modelsArray) {
-    var models = modelsArray;
+detectLanguageAjax(function (response) {
+    console.log(response);
 });
 
 var elementsArray = document.getElementsByTagName('*');
@@ -49,7 +49,7 @@ for (var i = 0; i < elementsArray.length; i++) {
                     audio.src = objectUrl;
                     audio.play();
                 });
-                // if not English
+            // if not English
             } else {
                 translateAjax(englishText, function (response) {
                     var spanishText = response.translations[0].translation;
@@ -168,5 +168,20 @@ function getLanguageModelsAjax(callback) {
         }
     }).then(function (response) {
         callback(response.models);
+    });
+};
+
+function detectLanguageAjax(text, callback) {
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
+    $.ajax({
+        url: url,
+        method: "POST",
+        headers: {
+            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Content-Type": "text/plain"
+        },
+        data: text
+    }).then(function (languageBestGuess) {
+        callback(languageBestGuess);
     });
 };
