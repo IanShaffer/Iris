@@ -5,7 +5,6 @@ for (var i = 0; i < elementsArray.length; i++) {
         textToSpeechAjax(this.innerHTML, function (response) {
             var blob = new Blob([response], { "type": "audio/wav" });
             var objectUrl = window.URL.createObjectURL(blob);
-            console.log(objectUrl);
             var audio = new Audio(objectUrl);
             audio.play();
         });
