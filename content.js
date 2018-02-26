@@ -33,7 +33,6 @@ var languages = {
 
 getLanguageModelsAjax(function (modelsArray) {
     var models = modelsArray;
-    console.log(models);
 });
 
 var elementsArray = document.getElementsByTagName('*');
