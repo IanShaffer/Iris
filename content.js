@@ -1,38 +1,62 @@
 var audio = new Audio();
-var chosenLanguageIndex = 1;
-var chosenVoice = "es-ES_LauraVoice";
-var languages = [
-    {
-        language: "Spanish",
+var chosenLanguage = "english";
+var languages = {
+    english: {
+        modelId: undefined,
+        voice: "en-US_AllisonVoice"
+    },
+    spanish: {
         modelId: "en-es-conversational",
         voice: "es-ES_LauraVoice"
     },
-    {
-        language: "Japanese",
+    french: {
+        modelId: "en-fr-conversational",
+        voice: "fr-FR_ReneeVoice"
+    },
+    portuguese: {
+        modelId: "en-pt-conversational",
+        voice: "pt-BR_IsabelaVoice"
+    },
+    german: {
+        modelId: "en-de",
+        voice: "de-DE_BirgitVoice"
+    },
+    italian: {
+        modelId: "en-it",
+        voice: "it-IT_FrancescaVoice"
+    },
+    japanese: {
         modelId: "en-ja",
         voice: "ja-JP_EmiVoice"
-    },
-]
-var chosenLanguage = languages[chosenLanguageIndex];
-
-getLanguageModelsAjax(function (modelsArray) {
-    var models = modelsArray;
-    console.log(models);
-});
+    }
+};
 
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML;
-        translateAjax(englishText, function (response) {
-            var spanishText = response.translations[0].translation;
-            textToSpeechAjax(spanishText, function (response) {
-                var blob = new Blob([response], { "type": "audio/wav" });
-                var objectUrl = window.URL.createObjectURL(blob);
-                audio.src = objectUrl;
-                audio.play();
-            });
-           // console.log("English: " + englishText + " | Translation: " + spanishText);
+        var englishText = this.innerHTML
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                textToSpeechAjax(englishText, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    audio.play();
+                });
+            // if not English
+            } else {
+                translateAjax(englishText, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    textToSpeechAjax(spanishText, function (response) {
+                        var blob = new Blob([response], { "type": "audio/wav" });
+                        var objectUrl = window.URL.createObjectURL(blob);
+                        audio.src = objectUrl;
+                        audio.play();
+                    });
+                });
+            }
         });
     });
     elementsArray[i].addEventListener("mouseenter", function (e) {
@@ -99,7 +123,7 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 });
 
 function textToSpeechAjax(text, callback) {
-    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + chosenLanguage.voice;
+    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
         method: "GET",
@@ -129,7 +153,7 @@ function translateAjax(text, callback) {
         },
         data: {
             text: text,
-            model_id: chosenLanguage.modelId
+            model_id: languages[chosenLanguage].modelId
         }
     }).then(function (response) {
         callback(response);
@@ -159,5 +183,20 @@ function getLanguageModelsAjax(callback) {
         }
     }).then(function (response) {
         callback(response.models);
+    });
+};
+
+function detectLanguageAjax(text, callback) {
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
+    $.ajax({
+        url: url,
+        method: "POST",
+        headers: {
+            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Content-Type": "text/plain"
+        },
+        data: text
+    }).then(function (languageBestGuess) {
+        callback(languageBestGuess);
     });
 };
