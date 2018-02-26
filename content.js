@@ -74,6 +74,9 @@ function textToSpeechAjax(text, callback) {
             "output": "speech.wav",
             "Access-Control-Allow-Origin": "*"
         },
+        data: {
+            text: text
+        },
         dataType: "binary",
         responseType: "arraybuffer"
     }).then(function (response) {
