@@ -1,13 +1,13 @@
+var languages = ['English', 'Spanish', 'French'];
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var checkPageButton = document.getElementById('checkPage');
-        checkPageButton.addEventListener('click', function () {
-            alert('test');
-        }, false);
-    }, false);
 
-    $(document).ready(function() { 
-        $("#checkPage").on("click", function() {
-           alert("YAY!"); 
-        });
-    }); 
+$(document).ready(function(){
+    for (i=0; i<languages.length; i++) {
+        var newDiv = $('<div>');
+        $(newDiv).attr('class', 'single-language');
+        $(newDiv).text(languages[i]);
+    
+        $('.languages').append(newDiv);
+        console.log(newDiv);
+    }
+})

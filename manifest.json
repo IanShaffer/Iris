@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Iris Plugin",
-    "description": "This extension will do stuff",
+    "description": "This extension will do cool stuff",
     "version": "1.0",
     "browser_action": {
         "default_icon": "iris_eye.png",
