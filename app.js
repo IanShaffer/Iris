@@ -25,4 +25,17 @@ $(document).ready(function(){
             // console.log(setLanguage);
           });
     })
+    
+    chrome.storage.sync.get("isOn", function(items) {
+        $("#isOn").attr("checked", items.isOn); 
+    });
+
+    $("#isOn").change(function() {
+        var value = $("#isOn").is(":checked");
+        chrome.storage.sync.set({"isOn":value}, function() { 
+        }); 
+    });
+
+
+
 })
