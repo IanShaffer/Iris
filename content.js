@@ -35,14 +35,6 @@ var languages = {
     }
 };
 
-var isOn = false;
-
-chrome.storage.sync.get("isOn", function(items) {
-   isOn = items.isOn; 
-});
-
-
-
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -201,14 +193,26 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
-    // only run ajax calls if we have a string to send
-    if (!text) {
-        return;
-    }
-    if (languages[chosenLanguage].modelId) {
-        translateAjax(text, function (response) {
-            var spanishText = response.translations[0].translation;
-            textToSpeechAjax(spanishText, function (response) {
+    chrome.storage.sync.get("isOn", function (items) {
+        var isOn = items.isOn;
+        // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
+        if (!text || isOn === false) {
+            return;
+        }
+        if (languages[chosenLanguage].modelId) {
+            translateAjax(text, function (response) {
+                var spanishText = response.translations[0].translation;
+                textToSpeechAjax(spanishText, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+                    if (!isPlaying)
+                        audio.play();
+                });
+            });
+        } else {
+            textToSpeechAjax(text, function (response) {
                 var blob = new Blob([response], { "type": "audio/wav" });
                 var objectUrl = window.URL.createObjectURL(blob);
                 audio.src = objectUrl;
@@ -216,124 +220,92 @@ function playBlob(text)
                 if (!isPlaying)
                     audio.play();
             });
-        });
-    } else {
-        textToSpeechAjax(text, function (response) {
-            var blob = new Blob([response], { "type": "audio/wav" });
-            var objectUrl = window.URL.createObjectURL(blob);
-            audio.src = objectUrl;
-            var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
-            if (!isPlaying)
-                audio.play();
-        });
-    } 
+        }
+    });
 }
 
 var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==";
 var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
-    if(isOn)
-    {
-        var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
-        $.ajax({
-            url: url,
-            method: "GET",
-            headers: {
-                "Authorization": TEXT_TO_SPEECH_AUTH,
-                "output": "speech.wav",
-                "Access-Control-Allow-Origin": "*"
-            },
-            data: {
-                text: text
-            },
-            dataType: "binary",
-            responseType: "arraybuffer"
-        }).then(function (response) {
-            callback(response);
-        });
-    }
+    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": TEXT_TO_SPEECH_AUTH,
+            "output": "speech.wav",
+            "Access-Control-Allow-Origin": "*"
+        },
+        data: {
+            text: text
+        },
+        dataType: "binary",
+        responseType: "arraybuffer"
+    }).then(function (response) {
+        callback(response);
+    });
 };
 
 function translateAjax(text, callback) {
-    if(isOn)
-    {
-        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate";
-        $.ajax({
-            url: url,
-            method: "GET",
-            headers: {
-                "Authorization": TRANSLATION_AUTH,
-                "Accept": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            },
-            data: {
-                text: text,
-                model_id: languages[chosenLanguage].modelId
-            }
-        }).then(function (response) {
-            callback(response);
-        });
-    }
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate";
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": TRANSLATION_AUTH,
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
+        data: {
+            text: text,
+            model_id: languages[chosenLanguage].modelId
+        }
+    }).then(function (response) {
+        callback(response);
+    });
 };
 
 function getLanguagesAjax(callback) {
-    if(isOn)
-    {
-        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identifiable_languages"
-        $.ajax({
-            url: url,
-            method: "GET",
-            headers: {
-                "Authorization": TRANSLATION_AUTH,
-                "Access-Control-Allow-Origin": "*"
-            }
-        }).then(function (response) {
-            callback(response.languages);
-        });
-    }
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identifiable_languages"
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": TRANSLATION_AUTH,
+            "Access-Control-Allow-Origin": "*"
+        }
+    }).then(function (response) {
+        callback(response.languages);
+    });
 };
 
 function getLanguageModelsAjax(callback) {
-    if(isOn) 
-    {
-        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/models"
-        $.ajax({
-            url: url,
-            method: "GET",
-            headers: {
-                "Authorization": TRANSLATION_AUTH,
-                "Access-Control-Allow-Origin": "*"
-            }
-        }).then(function (response) {
-            callback(response.models);
-        });
-    }
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/models"
+    $.ajax({
+        url: url,
+        method: "GET",
+        headers: {
+            "Authorization": TRANSLATION_AUTH,
+            "Access-Control-Allow-Origin": "*"
+        }
+    }).then(function (response) {
+        callback(response.models);
+    });
 };
 
 function detectLanguageAjax(text, callback) {
-    if(isOn) 
-    {
-        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
-        $.ajax({
-            url: url,
-            method: "POST",
-            headers: {
-                "Authorization": TRANSLATION_AUTH,
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type": "text/plain"
-            },
-            data: text
-        }).then(function (languageBestGuess) {
-            callback(languageBestGuess);
-        });
-    }
-};
-
-function getOffset(el) {
-    el = el.getBoundingClientRect();
-    return {
-        left: el.left + window.scrollX,
-        top: el.top + window.scrollY
-    }
+    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
+    $.ajax({
+        url: url,
+        method: "POST",
+        headers: {
+            "Authorization": TRANSLATION_AUTH,
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "text/plain"
+        },
+        data: text
+    }).then(function (languageBestGuess) {
+        callback(languageBestGuess);
+    });
 };
