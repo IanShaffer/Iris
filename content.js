@@ -100,10 +100,15 @@ for (var i = 0; i < elementsArray.length; i++) {
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
         var element = e.target;
-        // the following x and y method doesn't actually make any difference (ian thinks)
-        // var x = e.clientX;
-        // var y = e.clientY;
-        // var element = document.elementFromPoint(x, y + 1);
+        // var childElement = element.firstElementChild;
+        // if (childElement) {
+        //     console.log("nope");
+        //     return;
+        // }
+        // the following x and y method prevents the double speak on elements inside of elements
+        var x = e.clientX;
+        var y = e.clientY;
+        var element = document.elementFromPoint(x, y);
         currentElement = element;
         var value = "";
         // update string to send to IBM API depending upon tag
@@ -124,9 +129,14 @@ for (var i = 0; i < elementsArray.length; i++) {
                 if (element.innerText) {
                     value = "Link to ";
                     value += element.innerText;
-                } else {
+                } else  if (element.href) {
                     value = "Link to ";
                     value += element.href;
+                } else if (element.title) {
+                    value = "Link to ";
+                    value += element.title;
+                } else {
+                    value = "Unkown link";
                 }
                 break;
             case "H1","H2","H3","H4":
@@ -146,7 +156,7 @@ for (var i = 0; i < elementsArray.length; i++) {
             chosenLanguage = items.language;
             
             // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
-            if (block) {
+            if (block && value) {
                 setTimeout(function () {
                     // if the mouse is still over the element even after its queue time
                     if (currentElement === element) {
@@ -175,7 +185,7 @@ for (var i = 0; i < elementsArray.length; i++) {
                     }
                 }, WAIT_TIME);
             // if no sound has been played in the last WAIT_TIME amount of time
-            } else {
+            } else if (value) {
                 console.log("Element:", element);
                 // block further events for the WAIT_TIME interval (the blocked events will be queued)
                 block = true;
@@ -231,12 +241,12 @@ function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
-        method: "POST",
+        method: "GET",
         headers: {
             "Authorization": TEXT_TO_SPEECH_AUTH,
             "output": "speech.wav",
             "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json"
+            "Content-Type": "text/plain"
         },
         data: {
             text: text
