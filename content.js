@@ -32,6 +32,7 @@ var languages = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //helper function to retrieve binary data when making ajax call. 
 =======
 var elementsArray = document.getElementsByTagName('*');
@@ -110,6 +111,8 @@ for (var i = 0; i < elementsArray.length; i++) {
 }
 
 >>>>>>> origin/master
+=======
+>>>>>>> a3dcd854a3c45c2c406e5b526756260d55d08705
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -198,7 +201,24 @@ for (var i = 0; i < elementsArray.length; i++) {
             default: 
                 value = element.innerText;  
         }
-        console.log(value);
+        console.log(value);   
+          
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                playBlob(value);
+            // if not English
+            } else {
+                translateAjax(value, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    playBlob(spanishText); 
+                });
+            }
+        });
+    });
+
+}
         if(value !== "") 
             playBlob(value); 
     });
