@@ -1,44 +1,35 @@
-// var audio = new Audio();
-// var chosenLanguageIndex = 5;
-// var chosenVoice = "es-ES_LauraVoice";
-// var languages = [
-//     {
-//         language: "English",
-//         modelId: undefined,
-//         voice: "en-US_AllisonVoice"
-//     },
-//     {
-//         language: "Spanish",
-//         modelId: "en-es-conversational",
-//         voice: "es-ES_LauraVoice"
-//     },
-//     {
-//         language: "French",
-//         modelId: "en-fr-conversational",
-//         voice: "fr-FR_ReneeVoice"
-//     },
-//     {
-//         language: "Portuguese",
-//         modelId: "en-pt-conversational",
-//         voice: "pt-BR_IsabelaVoice"
-//     },
-//     {
-//         language: "German",
-//         modelId: "en-de",
-//         voice: "de-DE_BirgitVoice"
-//     },
-//     {
-//         language: "Italian",
-//         modelId: "en-it",
-//         voice: "it-IT_FrancescaVoice"
-//     },
-//     {
-//         language: "Japanese",
-//         modelId: "en-ja",
-//         voice: "ja-JP_EmiVoice"
-//     },
-// ];
-// var chosenLanguage = languages[chosenLanguageIndex];
+var audio = new Audio();
+var chosenLanguage = "english";
+var languages = {
+    english: {
+        modelId: undefined,
+        voice: "en-US_AllisonVoice"
+    },
+    spanish: {
+        modelId: "en-es-conversational",
+        voice: "es-ES_LauraVoice"
+    },
+    french: {
+        modelId: "en-fr-conversational",
+        voice: "fr-FR_ReneeVoice"
+    },
+    portuguese: {
+        modelId: "en-pt-conversational",
+        voice: "pt-BR_IsabelaVoice"
+    },
+    german: {
+        modelId: "en-de",
+        voice: "de-DE_BirgitVoice"
+    },
+    italian: {
+        modelId: "en-it",
+        voice: "it-IT_FrancescaVoice"
+    },
+    japanese: {
+        modelId: "en-ja",
+        voice: "ja-JP_EmiVoice"
+    }
+};
 
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
