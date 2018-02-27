@@ -7,6 +7,14 @@ body {
     background-color: rgb(217, 236, 218);
 }
 
+.header {
+    background-color: rgb(199, 221, 200);
+}
+
+.row {
+    padding: 0 50px;
+}
+
 #logo {
     font-family: 'Sans Sara', cursive;
     position: relative;
@@ -52,15 +60,20 @@ ul {
     padding-bottom: 5px;
     transition: .5s;
     font-size: 25px;
+    margin-right: 40px;
 }
 
 .menu-item a {
     padding-bottom: 2px;
-    transition: .2s;
+    /* transition: .2s; */
+}
+
+.menu-item a:hover {
+    border-bottom: 2pt solid rgb(80, 127, 113);
 }
 
 /* Body CSS */
-.number {
+/* .number {
     color: rgb(80, 127, 113);
     font-family: 'Sans Sara', cursive;
     display: inline;
@@ -75,4 +88,46 @@ ul {
     position: relative;
     font-size: 50px;
     margin-left: 20px;
+} */
+
+.section {
+    position: relative;
+    display: block;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    height: 700px;
+}
+
+#section-intro {
+    background-image: url("eye.png");
+    background-size: cover;
+    background-position: 0;
+}
+
+#section-who {
+    background-color: white;
+}
+
+#section-what {
+    background-color: rgb(217, 236, 218);
+}
+
+#section-why {
+    background-color: white;
+}
+
+.section-title {
+    color: rgb(80, 127, 113);
+    font-family: 'Sans Sara';
+    font-size: 40px;
+    text-decoration: underline;
+    position: relative;
+    display: block;
+}
+
+.description {
+    color: rgb(80, 127, 113);
+    position: relative;
+    display: block;
+    padding: 0px
 }
