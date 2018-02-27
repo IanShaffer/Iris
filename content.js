@@ -231,11 +231,12 @@ function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
-        method: "GET",
+        method: "POST",
         headers: {
             "Authorization": TEXT_TO_SPEECH_AUTH,
             "output": "speech.wav",
-            "Access-Control-Allow-Origin": "*"
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json"
         },
         data: {
             text: text
@@ -244,6 +245,9 @@ function textToSpeechAjax(text, callback) {
         responseType: "arraybuffer"
     }).then(function (response) {
         callback(response);
+    }).fail(function (jqXHR, textStatus) {
+            console.log("jqXHR:",jqXHR);
+            console.log("textStatus:", textStatus);
     });
 };
 
