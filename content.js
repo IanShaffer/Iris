@@ -31,88 +31,6 @@ var languages = {
     }
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-//helper function to retrieve binary data when making ajax call. 
-=======
-var elementsArray = document.getElementsByTagName('*');
-for (var i = 0; i < elementsArray.length; i++) {
-    elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
-        chrome.storage.sync.get('language', function (items) {
-            chosenLanguage = items.language;
-            // if English
-            if (!languages[chosenLanguage].modelId) {
-                textToSpeechAjax(englishText, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
-                });
-            // if not English
-            } else {
-                translateAjax(englishText, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    textToSpeechAjax(spanishText, function (response) {
-                        var blob = new Blob([response], { "type": "audio/wav" });
-                        var objectUrl = window.URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.play();
-                    });
-                });
-            }
-        });
-    });
-    elementsArray[i].addEventListener("mouseenter", function (e) {
-        var element = e.target;
-        var value = ""; 
-        //console.log(element.nodeName);
-        switch(element.nodeName)
-        {
-            case "INPUT":
-                value = element.value;
-                value += " " + element.getAttribute;
-                break;
-            default:
-                value = element.innerText;
-                console.log(element.nodeName);
-                value += " " + element.nodeName;
-            
-        }
-       // console.log($(value));var stringOfHtml = "<p></p><script>alert('fail');</scr" + "ipt><span></span>";
-        console.log(value); 
-        // crap
-        chrome.storage.sync.get('language', function (items) {
-            chosenLanguage = items.language;
-            // if English
-            if (!languages[chosenLanguage].modelId) {
-                textToSpeechAjax(value, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
-                });
-                // if not English
-            } else {
-                translateAjax(value, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    textToSpeechAjax(spanishText, function (response) {
-                        var blob = new Blob([response], { "type": "audio/wav" });
-                        var objectUrl = window.URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.play();
-                    });
-                });
-            }
-        });
-        // crap
-    });
-
-}
-
->>>>>>> origin/master
-=======
->>>>>>> a3dcd854a3c45c2c406e5b526756260d55d08705
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -217,12 +135,6 @@ for (var i = 0; i < elementsArray.length; i++) {
             }
         });
     });
-
-}
-        if(value !== "") 
-            playBlob(value); 
-    });
-
 }
 
 function playBlob(text) 
