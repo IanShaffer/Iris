@@ -8,7 +8,7 @@ body {
 }
 
 .header {
-    background-color: rgb(199, 221, 200);
+    margin-top: 25px;
 }
 
 .row {
@@ -65,7 +65,6 @@ ul {
 
 .menu-item a {
     padding-bottom: 2px;
-    /* transition: .2s; */
 }
 
 .menu-item a:hover {
@@ -73,23 +72,6 @@ ul {
 }
 
 /* Body CSS */
-/* .number {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 30px;
-}
-
-.section {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 50px;
-    margin-left: 20px;
-} */
-
 .section {
     position: relative;
     display: block;
@@ -130,4 +112,47 @@ ul {
     position: relative;
     display: block;
     padding: 0px
+}
+
+.logo {
+    width: 350px;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    display: block;
+}
+
+.logo-holder {
+    position: relative;
+    margin-top: 100px;
+}
+
+.tagline {
+    font-family: 'Yellowtail', cursive;
+    color: rgb(80, 127, 113);
+    font-size: 30px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.download-button {
+    text-align: center;
+    margin-top: 55px;
+}
+
+.btn {
+    font-family: 'Sans Sara';
+    font-size: 25px;
+    background-color: rgb(80, 127, 113);
+    color: rgb(217, 236, 218);
+    border: 2pt solid rgb(80, 127, 113);
+    transition: .3s;
+}
+
+.btn:hover {
+    color: rgb(80, 127, 113);
+    background-color: rgb(217, 236, 218);
+    border: 2pt solid rgb(80, 127, 113);
 }
