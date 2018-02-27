@@ -1,0 +1,158 @@
+@font-face {
+    font-family: 'Sans Sara';
+    src: url('sans-sara.ttf')
+}
+
+body {
+    background-color: rgb(217, 236, 218);
+}
+
+.header {
+    margin-top: 25px;
+}
+
+.row {
+    padding: 0 50px;
+}
+
+#logo {
+    font-family: 'Sans Sara', cursive;
+    position: relative;
+    font-size: 75px;
+    color:  rgb(80, 127, 113);
+    display: inline;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.top-menu {
+    margin: auto;
+}
+
+#top-menu {
+    display: inline;
+    position: relative;
+    right: 0px;
+    top: 0px;
+    margin: auto 0 auto auto;
+}
+
+.menu-item {
+    display: inline;
+    color: rgb(80, 127, 113);
+    font-family: 'Sans Sara', cursive;
+    padding-bottom: 5px;
+    transition: .5s;
+    font-size: 25px;
+    margin-right: 40px;
+}
+
+.menu-item a {
+    padding-bottom: 2px;
+}
+
+.menu-item a:hover {
+    border-bottom: 2pt solid rgb(80, 127, 113);
+}
+
+/* Body CSS */
+.section {
+    position: relative;
+    display: block;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    height: 700px;
+}
+
+#section-intro {
+    background-image: url("eye.png");
+    background-size: cover;
+    background-position: 0;
+}
+
+#section-who {
+    background-color: white;
+}
+
+#section-what {
+    background-color: rgb(217, 236, 218);
+}
+
+#section-why {
+    background-color: white;
+}
+
+.section-title {
+    color: rgb(80, 127, 113);
+    font-family: 'Sans Sara';
+    font-size: 40px;
+    text-decoration: underline;
+    position: relative;
+    display: block;
+}
+
+.description {
+    color: rgb(80, 127, 113);
+    position: relative;
+    display: block;
+    padding: 0px
+}
+
+.logo {
+    width: 350px;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    display: block;
+}
+
+.logo-holder {
+    position: relative;
+    margin-top: 100px;
+}
+
+.tagline {
+    font-family: 'Yellowtail', cursive;
+    color: rgb(80, 127, 113);
+    font-size: 30px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.download-button {
+    text-align: center;
+    margin-top: 55px;
+}
+
+.btn {
+    font-family: 'Sans Sara';
+    font-size: 25px;
+    background-color: rgb(80, 127, 113);
+    color: rgb(217, 236, 218);
+    border: 2pt solid rgb(80, 127, 113);
+    transition: .3s;
+}
+
+.btn:hover {
+    color: rgb(80, 127, 113);
+    background-color: rgb(217, 236, 218);
+    border: 2pt solid rgb(80, 127, 113);
+}
