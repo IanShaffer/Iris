@@ -99,12 +99,14 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = "";
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
-        // var element = e.target;
-        var x = e.clientX;
-        var y = e.clientY;
-        var element = document.elementFromPoint(x, y + 1);
+        var element = e.target;
+        // the following x and y method doesn't actually make any difference (ian thinks)
+        // var x = e.clientX;
+        // var y = e.clientY;
+        // var element = document.elementFromPoint(x, y + 1);
         currentElement = element;
         var value = "";
+        // update string to send to IBM API depending upon tag
         switch(element.nodeName)
         {
             case "INPUT":
@@ -139,18 +141,25 @@ for (var i = 0; i < elementsArray.length; i++) {
                 value = element.innerText;
         } 
         
+        // get the language set in the chrome extension modal
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             
+            // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
             if (block) {
                 setTimeout(function () {
+                    // if the mouse is still over the element even after its queue time
                     if (currentElement === element) {
+                        // if the current queued event is not blocked by a previously queued event and its not repeating the last played element
                         if (!block && element !== lastPlayedElement) {
                             console.log("Element:", element);
+                            // block further events for the WAIT_TIME interval (the blocked events will be queued)
                             block = true;
+                            // unblock events after WAIT_TIME interval
                             setTimeout(function () {
                                 block = false;
                             }, WAIT_TIME);
+                            // let the browser know that this element is the most recently played element so its not replayed
                             lastPlayedElement = element;
                             // if English
                             if (!languages[chosenLanguage].modelId && value) {
@@ -165,12 +174,16 @@ for (var i = 0; i < elementsArray.length; i++) {
                         }
                     }
                 }, WAIT_TIME);
-            } else if (!block) {
+            // if no sound has been played in the last WAIT_TIME amount of time
+            } else {
                 console.log("Element:", element);
+                // block further events for the WAIT_TIME interval (the blocked events will be queued)
                 block = true;
+                // unblock events after WAIT_TIME interval
                 setTimeout(function () {
                     block = false;
                 }, WAIT_TIME);
+                // let the browser know that this element is the most recently played element so its not replayed
                 lastPlayedElement = element;
                 // if English
                 if (!languages[chosenLanguage].modelId && value) {
