@@ -193,16 +193,7 @@ for (var i = 0; i < elementsArray.length; i++) {
                 }, WAIT_TIME);
                 // let the browser know that this element is the most recently played element so its not replayed
                 lastPlayedElement = element;
-                // if English
-                if (!languages[chosenLanguage].modelId && value) {
-                    playBlob(value);
-                // if not English
-                } else if (languages[chosenLanguage].modelId && value) {
-                    translateAjax(value, function (response) {
-                        var spanishText = response.translations[0].translation;
-                        playBlob(spanishText); 
-                    });
-                }
+                playBlob(value);
             }
         });
     });
@@ -210,14 +201,32 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
-    textToSpeechAjax(text, function (response) {
-        var blob = new Blob([response], { "type": "audio/wav" });
-        var objectUrl = window.URL.createObjectURL(blob);
-        audio.src = objectUrl;
-        var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
-        if(!isPlaying)
-            audio.play();
-    });
+    // only run ajax calls if we have a string to send
+    if (!text) {
+        return;
+    }
+    if (languages[chosenLanguage].modelId) {
+        translateAjax(text, function (response) {
+            var spanishText = response.translations[0].translation;
+            textToSpeechAjax(spanishText, function (response) {
+                var blob = new Blob([response], { "type": "audio/wav" });
+                var objectUrl = window.URL.createObjectURL(blob);
+                audio.src = objectUrl;
+                var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+                if (!isPlaying)
+                    audio.play();
+            });
+        });
+    } else {
+        textToSpeechAjax(text, function (response) {
+            var blob = new Blob([response], { "type": "audio/wav" });
+            var objectUrl = window.URL.createObjectURL(blob);
+            audio.src = objectUrl;
+            var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+            if (!isPlaying)
+                audio.play();
+        });
+    } 
 }
 
 var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==";
