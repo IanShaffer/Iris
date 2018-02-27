@@ -2,6 +2,7 @@ var audio = new Audio();
 var block = false;
 var WAIT_TIME = 500;
 var currentElement;
+var lastPlayedElement;
 var chosenLanguage = "english";
 var languages = {
     english: {
@@ -87,15 +88,15 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML;
+        var value = this.innerHTML;
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             // if English
-            if (!languages[chosenLanguage].modelId && englishText) {
-                playBlob(englishText);
+            if (!languages[chosenLanguage].modelId && value) {
+                playBlob(value);
             // if not English
-            } else if (languages[chosenLanguage].modelId && englishText) {
-                translateAjax(englishText, function (response) {
+            } else if (languages[chosenLanguage].modelId && value) {
+                translateAjax(value, function (response) {
                     var spanishText = response.translations[0].translation;
                     playBlob(spanishText);
                 });
@@ -105,23 +106,36 @@ for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("mouseleave", function (e) {
         currentElement = "";
     });
-    elementsArray[i].addEventListener("mouseenter", function (e) {
+    elementsArray[i].addEventListener("mouseover", function (e) {
         var element = e.target;
+        // the following x and y method doesn't actually make any difference (ian thinks)
+        // var x = e.clientX;
+        // var y = e.clientY;
+        // var element = document.elementFromPoint(x, y + 1);
         currentElement = element;
-        var value = ""; 
-        //console.log(element); 
+        var value = "";
+        // update string to send to IBM API depending upon tag
         switch(element.nodeName)
         {
             case "INPUT":
                 value = element.value;
-                value += " button";
+                if (element.type === "submit") {
+                    value += " button";
+                } else if (element.type === "text") {
+                    value += " text box input";
+                }
                 break;
             case "DIV":
                 value = "";
                 break;
             case "A":
-                value = "link to ";
-                value += element.innerText;
+                if (element.innerText) {
+                    value = "Link to ";
+                    value += element.innerText;
+                } else {
+                    value = "Link to ";
+                    value += element.href;
+                }
                 break;
             case "H1","H2","H3","H4":
                 value = element.innerText;
@@ -129,32 +143,57 @@ for (var i = 0; i < elementsArray.length; i++) {
                 break;
             case "IMG":
                 value = element.innerText;
-                value += " Image " + element.alt;
+                value += "Image of " + element.alt;
                 break;
             default:
                 value = element.innerText;
-        }
-        //console.log(value);  
-          
+        } 
+        
+        // get the language set in the chrome extension modal
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
-            // if English
-            console.log(block);
+            
+            // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
             if (block) {
                 setTimeout(function () {
+                    // if the mouse is still over the element even after its queue time
                     if (currentElement === element) {
-                        if (!languages[chosenLanguage].modelId && value) {
-                            playBlob(value);
+                        // if the current queued event is not blocked by a previously queued event and its not repeating the last played element
+                        if (!block && element !== lastPlayedElement) {
+                            console.log("Element:", element);
+                            // block further events for the WAIT_TIME interval (the blocked events will be queued)
+                            block = true;
+                            // unblock events after WAIT_TIME interval
+                            setTimeout(function () {
+                                block = false;
+                            }, WAIT_TIME);
+                            // let the browser know that this element is the most recently played element so its not replayed
+                            lastPlayedElement = element;
+                            // if English
+                            if (!languages[chosenLanguage].modelId && value) {
+                                playBlob(value);
                             // if not English
-                        } else if (languages[chosenLanguage].modelId && value) {
-                            translateAjax(value, function (response) {
-                                var spanishText = response.translations[0].translation;
-                                playBlob(spanishText);
-                            });
+                            } else if (languages[chosenLanguage].modelId && value) {
+                                translateAjax(value, function (response) {
+                                    var spanishText = response.translations[0].translation;
+                                    playBlob(spanishText);
+                                });
+                            }
                         }
                     }
                 }, WAIT_TIME);
+            // if no sound has been played in the last WAIT_TIME amount of time
             } else {
+                console.log("Element:", element);
+                // block further events for the WAIT_TIME interval (the blocked events will be queued)
+                block = true;
+                // unblock events after WAIT_TIME interval
+                setTimeout(function () {
+                    block = false;
+                }, WAIT_TIME);
+                // let the browser know that this element is the most recently played element so its not replayed
+                lastPlayedElement = element;
+                // if English
                 if (!languages[chosenLanguage].modelId && value) {
                     playBlob(value);
                 // if not English
@@ -178,10 +217,6 @@ function playBlob(text)
         var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
         if(!isPlaying)
             audio.play();
-        block = true;
-        setTimeout(function () {
-            block = false;
-        }, WAIT_TIME);
     });
 }
 
@@ -283,5 +318,13 @@ function detectLanguageAjax(text, callback) {
         }).then(function (languageBestGuess) {
             callback(languageBestGuess);
         });
+    }
+};
+
+function getOffset(el) {
+    el = el.getBoundingClientRect();
+    return {
+        left: el.left + window.scrollX,
+        top: el.top + window.scrollY
     }
 };
