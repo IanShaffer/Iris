@@ -79,15 +79,15 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML;
+        var value = this.innerHTML;
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             // if English
-            if (!languages[chosenLanguage].modelId && englishText) {
-                playBlob(englishText);
+            if (!languages[chosenLanguage].modelId && value) {
+                playBlob(value);
             // if not English
-            } else if (languages[chosenLanguage].modelId && englishText) {
-                translateAjax(englishText, function (response) {
+            } else if (languages[chosenLanguage].modelId && value) {
+                translateAjax(value, function (response) {
                     var spanishText = response.translations[0].translation;
                     playBlob(spanishText);
                 });
@@ -100,8 +100,7 @@ for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("mouseenter", function (e) {
         var element = e.target;
         currentElement = element;
-        var value = ""; 
-        //console.log(element); 
+        var value = "";
         switch(element.nodeName)
         {
             case "INPUT":
@@ -126,18 +125,18 @@ for (var i = 0; i < elementsArray.length; i++) {
             default:
                 value = element.innerText;
         }
-        //console.log(value);  
+        console.log(value);  
           
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
-            // if English
-            console.log(block);
+            
             if (block) {
                 setTimeout(function () {
                     if (currentElement === element) {
+                        // if English
                         if (!languages[chosenLanguage].modelId && value) {
                             playBlob(value);
-                            // if not English
+                        // if not English
                         } else if (languages[chosenLanguage].modelId && value) {
                             translateAjax(value, function (response) {
                                 var spanishText = response.translations[0].translation;
@@ -147,6 +146,7 @@ for (var i = 0; i < elementsArray.length; i++) {
                     }
                 }, WAIT_TIME);
             } else {
+                // if English
                 if (!languages[chosenLanguage].modelId && value) {
                     playBlob(value);
                 // if not English
