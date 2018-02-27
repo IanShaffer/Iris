@@ -158,7 +158,8 @@ function textToSpeechAjax(text, callback) {
         method: "GET",
         headers: {
             "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
-            "output": "speech.wav"
+            "output": "speech.wav",
+            "Access-Control-Allow-Origin": "*"
         },
         data: {
             text: text
@@ -177,7 +178,8 @@ function translateAjax(text, callback) {
         method: "GET",
         headers: {
             "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
         },
         data: {
             text: text,
@@ -194,7 +196,8 @@ function getLanguagesAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg=="
+            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
         callback(response.languages);
@@ -207,7 +210,8 @@ function getLanguageModelsAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg=="
+            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
         callback(response.models);
@@ -221,6 +225,7 @@ function detectLanguageAjax(text, callback) {
         method: "POST",
         headers: {
             "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Access-Control-Allow-Origin": "*",
             "Content-Type": "text/plain"
         },
         data: text
