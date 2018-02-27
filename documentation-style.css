@@ -1,10 +1,16 @@
+@font-face {
+    font-family: Sans Sara;
+    src: url(sans-sara.ttf);
+}
+
 body {
     background-color: rgb(217, 236, 218);
 }
 
 .logo {
-    font-family: 'Shrikhand', cursive;
+    font-family: 'Sana Sara', cursive;
     margin: 0 auto;
     position: relative;
     font-size: 75px;
+    color:  rgb(80, 127, 113);
 }
