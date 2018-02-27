@@ -1,4 +1,8 @@
 var audio = new Audio();
+var block = false;
+var WAIT_TIME = 500;
+var currentElement;
+var lastPlayedElement;
 var chosenLanguage = "english";
 var languages = {
     english: {
@@ -76,62 +80,112 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
+        var value = this.innerHTML;
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             // if English
-            if (!languages[chosenLanguage].modelId) {
-                playBlob(englishText);
+            if (!languages[chosenLanguage].modelId && value) {
+                playBlob(value);
             // if not English
-            } else {
-                translateAjax(englishText, function (response) {
+            } else if (languages[chosenLanguage].modelId && value) {
+                translateAjax(value, function (response) {
                     var spanishText = response.translations[0].translation;
-                    playBlob(spanishText); 
+                    playBlob(spanishText);
                 });
             }
         });
     });
-    elementsArray[i].addEventListener("mouseenter", function (e) {
+    elementsArray[i].addEventListener("mouseleave", function (e) {
+        currentElement = "";
+    });
+    elementsArray[i].addEventListener("mouseover", function (e) {
         var element = e.target;
-        var value = ""; 
-        console.log(element); 
+        // the following x and y method doesn't actually make any difference (ian thinks)
+        // var x = e.clientX;
+        // var y = e.clientY;
+        // var element = document.elementFromPoint(x, y + 1);
+        currentElement = element;
+        var value = "";
+        // update string to send to IBM API depending upon tag
         switch(element.nodeName)
         {
             case "INPUT":
                 value = element.value;
-                value += " button";
-                break;  
+                if (element.type === "submit") {
+                    value += " button";
+                } else if (element.type === "text") {
+                    value += " text box input";
+                }
+                break;
             case "DIV":
                 value = "";
-                break;  
+                break;
             case "A":
-                value = element.innerText;
-                value += " link";
-                break;  
+                if (element.innerText) {
+                    value = "Link to ";
+                    value += element.innerText;
+                } else {
+                    value = "Link to ";
+                    value += element.href;
+                }
+                break;
             case "H1","H2","H3","H4":
                 value = element.innerText;
                 value += " title";
-                break;    
+                break;
             case "IMG":
                 value = element.innerText;
-                value += " Image " + element.alt;
-                break;  
-            default: 
-                value = element.innerText;  
-        }
-        console.log(value);   
-          
+                value += "Image of " + element.alt;
+                break;
+            default:
+                value = element.innerText;
+        } 
+        
+        // get the language set in the chrome extension modal
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
-            // if English
-            if (!languages[chosenLanguage].modelId) {
-                playBlob(value);
-            // if not English
+            
+            // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
+            if (block) {
+                setTimeout(function () {
+                    // if the mouse is still over the element even after its queue time
+                    if (currentElement === element) {
+                        // if the current queued event is not blocked by a previously queued event and its not repeating the last played element
+                        if (!block && element !== lastPlayedElement) {
+                            console.log("Element:", element);
+                            // block further events for the WAIT_TIME interval (the blocked events will be queued)
+                            block = true;
+                            // unblock events after WAIT_TIME interval
+                            setTimeout(function () {
+                                block = false;
+                            }, WAIT_TIME);
+                            // let the browser know that this element is the most recently played element so its not replayed
+                            lastPlayedElement = element;
+                            // if English
+                            if (!languages[chosenLanguage].modelId && value) {
+                                playBlob(value);
+                            // if not English
+                            } else if (languages[chosenLanguage].modelId && value) {
+                                translateAjax(value, function (response) {
+                                    var spanishText = response.translations[0].translation;
+                                    playBlob(spanishText);
+                                });
+                            }
+                        }
+                    }
+                }, WAIT_TIME);
+            // if no sound has been played in the last WAIT_TIME amount of time
             } else {
-                translateAjax(value, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    playBlob(spanishText); 
-                });
+                console.log("Element:", element);
+                // block further events for the WAIT_TIME interval (the blocked events will be queued)
+                block = true;
+                // unblock events after WAIT_TIME interval
+                setTimeout(function () {
+                    block = false;
+                }, WAIT_TIME);
+                // let the browser know that this element is the most recently played element so its not replayed
+                lastPlayedElement = element;
+                playBlob(value);
             }
         });
     });
@@ -139,17 +193,39 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
-    textToSpeechAjax(text, function (response) {
-        var blob = new Blob([response], { "type": "audio/wav" });
-        var objectUrl = window.URL.createObjectURL(blob);
-        audio.src = objectUrl;
-        var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
-        if(!isPlaying) 
-            audio.play();
+    chrome.storage.sync.get("isOn", function (items) {
+        var isOn = items.isOn;
+        // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
+        if (!text || isOn === false) {
+            return;
+        }
+        if (languages[chosenLanguage].modelId) {
+            translateAjax(text, function (response) {
+                var spanishText = response.translations[0].translation;
+                textToSpeechAjax(spanishText, function (response) {
+                    var blob = new Blob([response], { "type": "audio/wav" });
+                    var objectUrl = window.URL.createObjectURL(blob);
+                    audio.src = objectUrl;
+                    var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+                    if (!isPlaying)
+                        audio.play();
+                });
+            });
+        } else {
+            textToSpeechAjax(text, function (response) {
+                var blob = new Blob([response], { "type": "audio/wav" });
+                var objectUrl = window.URL.createObjectURL(blob);
+                audio.src = objectUrl;
+                var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+                if (!isPlaying)
+                    audio.play();
+            });
+        }
     });
 }
 
-
+var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==";
+var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
@@ -157,7 +233,7 @@ function textToSpeechAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
+            "Authorization": TEXT_TO_SPEECH_AUTH,
             "output": "speech.wav",
             "Access-Control-Allow-Origin": "*"
         },
@@ -177,7 +253,7 @@ function translateAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Accept": "application/json",
             "Access-Control-Allow-Origin": "*"
         },
@@ -196,7 +272,7 @@ function getLanguagesAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
@@ -210,7 +286,7 @@ function getLanguageModelsAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
@@ -224,7 +300,7 @@ function detectLanguageAjax(text, callback) {
         url: url,
         method: "POST",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*",
             "Content-Type": "text/plain"
         },
