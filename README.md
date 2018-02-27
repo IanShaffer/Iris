@@ -1,4 +1,4 @@
-# Project - IRIS
+# Project IRIS
 
 This project is a chrome extension that serves to provide a text-to-speech option for any website. It primarily targets visually impaired as well as people with blindness.
 
