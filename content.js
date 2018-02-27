@@ -2,6 +2,7 @@ var audio = new Audio();
 var block = false;
 var WAIT_TIME = 500;
 var currentElement;
+var lastPlayedElement;
 var chosenLanguage = "english";
 var languages = {
     english: {
@@ -97,22 +98,34 @@ for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("mouseleave", function (e) {
         currentElement = "";
     });
-    elementsArray[i].addEventListener("mouseenter", function (e) {
-        var element = e.target;
+    elementsArray[i].addEventListener("mouseover", function (e) {
+        // var element = e.target;
+        var x = e.clientX;
+        var y = e.clientY;
+        var element = document.elementFromPoint(x, y + 1);
         currentElement = element;
         var value = "";
         switch(element.nodeName)
         {
             case "INPUT":
                 value = element.value;
-                value += " button";
+                if (element.type === "submit") {
+                    value += " button";
+                } else if (element.type === "text") {
+                    value += " text box input";
+                }
                 break;
             case "DIV":
                 value = "";
                 break;
             case "A":
-                value = "link to ";
-                value += element.innerText;
+                if (element.innerText) {
+                    value = "Link to ";
+                    value += element.innerText;
+                } else {
+                    value = "Link to ";
+                    value += element.href;
+                }
                 break;
             case "H1","H2","H3","H4":
                 value = element.innerText;
@@ -120,32 +133,45 @@ for (var i = 0; i < elementsArray.length; i++) {
                 break;
             case "IMG":
                 value = element.innerText;
-                value += " Image " + element.alt;
+                value += "Image of " + element.alt;
                 break;
             default:
                 value = element.innerText;
-        }
-        console.log(value);  
-          
+        } 
+        
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             
             if (block) {
                 setTimeout(function () {
                     if (currentElement === element) {
-                        // if English
-                        if (!languages[chosenLanguage].modelId && value) {
-                            playBlob(value);
-                        // if not English
-                        } else if (languages[chosenLanguage].modelId && value) {
-                            translateAjax(value, function (response) {
-                                var spanishText = response.translations[0].translation;
-                                playBlob(spanishText);
-                            });
+                        if (!block && element !== lastPlayedElement) {
+                            console.log("Element:", element);
+                            block = true;
+                            setTimeout(function () {
+                                block = false;
+                            }, WAIT_TIME);
+                            lastPlayedElement = element;
+                            // if English
+                            if (!languages[chosenLanguage].modelId && value) {
+                                playBlob(value);
+                            // if not English
+                            } else if (languages[chosenLanguage].modelId && value) {
+                                translateAjax(value, function (response) {
+                                    var spanishText = response.translations[0].translation;
+                                    playBlob(spanishText);
+                                });
+                            }
                         }
                     }
                 }, WAIT_TIME);
-            } else {
+            } else if (!block) {
+                console.log("Element:", element);
+                block = true;
+                setTimeout(function () {
+                    block = false;
+                }, WAIT_TIME);
+                lastPlayedElement = element;
                 // if English
                 if (!languages[chosenLanguage].modelId && value) {
                     playBlob(value);
@@ -170,10 +196,6 @@ function playBlob(text)
         var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
         if(!isPlaying)
             audio.play();
-        block = true;
-        setTimeout(function () {
-            block = false;
-        }, WAIT_TIME);
     });
 }
 
@@ -261,4 +283,12 @@ function detectLanguageAjax(text, callback) {
     }).then(function (languageBestGuess) {
         callback(languageBestGuess);
     });
+};
+
+function getOffset(el) {
+    el = el.getBoundingClientRect();
+    return {
+        left: el.left + window.scrollX,
+        top: el.top + window.scrollY
+    }
 };
