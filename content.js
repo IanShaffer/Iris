@@ -31,7 +31,6 @@ var languages = {
     }
 };
 
-//helper function to retrieve binary data when making ajax call. 
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -120,7 +119,24 @@ for (var i = 0; i < elementsArray.length; i++) {
             default: 
                 value = element.innerText;  
         }
-        console.log(value);
+        console.log(value);   
+          
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                playBlob(value);
+            // if not English
+            } else {
+                translateAjax(value, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    playBlob(spanishText); 
+                });
+            }
+        });
+    });
+
+}
         if(value !== "") 
             playBlob(value); 
     });
