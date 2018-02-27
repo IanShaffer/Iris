@@ -1,6 +1,7 @@
 var audio = new Audio();
 var block = false;
-var waitTime = 500;
+var WAIT_TIME = 500;
+var currentElement;
 var chosenLanguage = "english";
 var languages = {
     english: {
@@ -93,8 +94,12 @@ for (var i = 0; i < elementsArray.length; i++) {
             }
         });
     });
+    elementsArray[i].addEventListener("mouseleave", function (e) {
+        currentElement = "";
+    });
     elementsArray[i].addEventListener("mouseenter", function (e) {
         var element = e.target;
+        currentElement = element;
         var value = ""; 
         //console.log(element); 
         switch(element.nodeName)
@@ -127,14 +132,30 @@ for (var i = 0; i < elementsArray.length; i++) {
             chosenLanguage = items.language;
             // if English
             console.log(block);
-            if (!languages[chosenLanguage].modelId && value && !block) {
-                playBlob(value);
-            // if not English
-            } else if (languages[chosenLanguage].modelId && value && !block) {
-                translateAjax(value, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    playBlob(spanishText); 
-                });
+            if (block) {
+                setTimeout(function () {
+                    if (currentElement === element) {
+                        if (!languages[chosenLanguage].modelId && value) {
+                            playBlob(value);
+                            // if not English
+                        } else if (languages[chosenLanguage].modelId && value) {
+                            translateAjax(value, function (response) {
+                                var spanishText = response.translations[0].translation;
+                                playBlob(spanishText);
+                            });
+                        }
+                    }
+                }, WAIT_TIME);
+            } else {
+                if (!languages[chosenLanguage].modelId && value) {
+                    playBlob(value);
+                // if not English
+                } else if (languages[chosenLanguage].modelId && value) {
+                    translateAjax(value, function (response) {
+                        var spanishText = response.translations[0].translation;
+                        playBlob(spanishText); 
+                    });
+                }
             }
         });
     });
@@ -152,8 +173,7 @@ function playBlob(text)
         block = true;
         setTimeout(function () {
             block = false;
-
-        }, waitTime);
+        }, WAIT_TIME);
     });
 }
 
