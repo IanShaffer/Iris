@@ -31,81 +31,6 @@ var languages = {
     }
 };
 
-var elementsArray = document.getElementsByTagName('*');
-for (var i = 0; i < elementsArray.length; i++) {
-    elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
-        chrome.storage.sync.get('language', function (items) {
-            chosenLanguage = items.language;
-            // if English
-            if (!languages[chosenLanguage].modelId) {
-                textToSpeechAjax(englishText, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
-                });
-            // if not English
-            } else {
-                translateAjax(englishText, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    textToSpeechAjax(spanishText, function (response) {
-                        var blob = new Blob([response], { "type": "audio/wav" });
-                        var objectUrl = window.URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.play();
-                    });
-                });
-            }
-        });
-    });
-    elementsArray[i].addEventListener("mouseenter", function (e) {
-        var element = e.target;
-        var value = ""; 
-        //console.log(element.nodeName);
-        switch(element.nodeName)
-        {
-            case "INPUT":
-                value = element.value;
-                value += " " + element.getAttribute;
-                break;
-            default:
-                value = element.innerText;
-                console.log(element.nodeName);
-                value += " " + element.nodeName;
-            
-        }
-       // console.log($(value));var stringOfHtml = "<p></p><script>alert('fail');</scr" + "ipt><span></span>";
-        console.log(value); 
-        // crap
-        chrome.storage.sync.get('language', function (items) {
-            chosenLanguage = items.language;
-            // if English
-            if (!languages[chosenLanguage].modelId) {
-                textToSpeechAjax(value, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
-                });
-                // if not English
-            } else {
-                translateAjax(value, function (response) {
-                    var spanishText = response.translations[0].translation;
-                    textToSpeechAjax(spanishText, function (response) {
-                        var blob = new Blob([response], { "type": "audio/wav" });
-                        var objectUrl = window.URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.play();
-                    });
-                });
-            }
-        });
-        // crap
-    });
-
-}
-
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -147,6 +72,91 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     }
 });
 
+
+var elementsArray = document.getElementsByTagName('*');
+for (var i = 0; i < elementsArray.length; i++) {
+    elementsArray[i].addEventListener("focus", function () {
+        var englishText = this.innerHTML
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                playBlob(englishText);
+            // if not English
+            } else {
+                translateAjax(englishText, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    playBlob(spanishText); 
+                });
+            }
+        });
+    });
+    elementsArray[i].addEventListener("mouseenter", function (e) {
+        var element = e.target;
+        var value = ""; 
+        console.log(element); 
+        switch(element.nodeName)
+        {
+            case "INPUT":
+                value = element.value;
+                value += " button";
+                break;  
+            case "DIV":
+                value = "";
+                break;  
+            case "A":
+                value = element.innerText;
+                value += " link";
+                break;  
+            case "H1","H2","H3","H4":
+                value = element.innerText;
+                value += " title";
+                break;    
+            case "IMG":
+                value = element.innerText;
+                value += " Image " + element.alt;
+                break;  
+            default: 
+                value = element.innerText;  
+        }
+        console.log(value);   
+          
+        chrome.storage.sync.get('language', function (items) {
+            chosenLanguage = items.language;
+            // if English
+            if (!languages[chosenLanguage].modelId) {
+                playBlob(value);
+            // if not English
+            } else {
+                translateAjax(value, function (response) {
+                    var spanishText = response.translations[0].translation;
+                    playBlob(spanishText); 
+                });
+            }
+        });
+    });
+
+}
+        if(value !== "") 
+            playBlob(value); 
+    });
+
+}
+
+function playBlob(text) 
+{
+    textToSpeechAjax(text, function (response) {
+        var blob = new Blob([response], { "type": "audio/wav" });
+        var objectUrl = window.URL.createObjectURL(blob);
+        audio.src = objectUrl;
+        var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
+        if(!isPlaying) 
+            audio.play();
+    });
+}
+
+
+
 function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
@@ -154,8 +164,7 @@ function textToSpeechAjax(text, callback) {
         method: "GET",
         headers: {
             "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
-            "output": "speech.wav",
-            "Access-Control-Allow-Origin": "*"
+            "output": "speech.wav"
         },
         data: {
             text: text
