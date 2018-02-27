@@ -177,7 +177,8 @@ function playBlob(text)
     });
 }
 
-
+var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==";
+var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
@@ -185,7 +186,7 @@ function textToSpeechAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==",
+            "Authorization": TEXT_TO_SPEECH_AUTH,
             "output": "speech.wav",
             "Access-Control-Allow-Origin": "*"
         },
@@ -205,7 +206,7 @@ function translateAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Accept": "application/json",
             "Access-Control-Allow-Origin": "*"
         },
@@ -224,7 +225,7 @@ function getLanguagesAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
@@ -238,7 +239,7 @@ function getLanguageModelsAjax(callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*"
         }
     }).then(function (response) {
@@ -252,7 +253,7 @@ function detectLanguageAjax(text, callback) {
         url: url,
         method: "POST",
         headers: {
-            "Authorization": "Basic MGNhNTJjNjgtNThiNS00NjI1LTk5ZWUtM2E2N2FjN2FlMDFjOlhMVWZTbDM0aUxrdg==",
+            "Authorization": TRANSLATION_AUTH,
             "Access-Control-Allow-Origin": "*",
             "Content-Type": "text/plain"
         },
