@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Sans Sara';
+    src: url('sans-sara.ttf')
+}
+
 html {
     height: 200px;
     width: 200px;
@@ -14,7 +19,7 @@ body {
 }
 
 .iris {
-    font-family: 'Shrikhand', cursive;
+    font-family: 'Sans Sara', cursive;
     background-color: rgb(80, 127, 113);
     color: rgb(217, 236, 218);
     text-align: center;
