@@ -1,4 +1,6 @@
 var audio = new Audio();
+var block = false;
+var waitTime = 500;
 var chosenLanguage = "english";
 var languages = {
     english: {
@@ -76,17 +78,17 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
-        var englishText = this.innerHTML
+        var englishText = this.innerHTML;
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             // if English
-            if (!languages[chosenLanguage].modelId) {
+            if (!languages[chosenLanguage].modelId && englishText) {
                 playBlob(englishText);
             // if not English
-            } else {
+            } else if (languages[chosenLanguage].modelId && englishText) {
                 translateAjax(englishText, function (response) {
                     var spanishText = response.translations[0].translation;
-                    playBlob(spanishText); 
+                    playBlob(spanishText);
                 });
             }
         });
@@ -94,40 +96,41 @@ for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("mouseenter", function (e) {
         var element = e.target;
         var value = ""; 
-        console.log(element); 
+        //console.log(element); 
         switch(element.nodeName)
         {
             case "INPUT":
                 value = element.value;
                 value += " button";
-                break;  
+                break;
             case "DIV":
                 value = "";
-                break;  
+                break;
             case "A":
-                value = element.innerText;
-                value += " link";
-                break;  
+                value = "link to ";
+                value += element.innerText;
+                break;
             case "H1","H2","H3","H4":
                 value = element.innerText;
                 value += " title";
-                break;    
+                break;
             case "IMG":
                 value = element.innerText;
                 value += " Image " + element.alt;
-                break;  
-            default: 
-                value = element.innerText;  
+                break;
+            default:
+                value = element.innerText;
         }
-        console.log(value);   
+        //console.log(value);  
           
         chrome.storage.sync.get('language', function (items) {
             chosenLanguage = items.language;
             // if English
-            if (!languages[chosenLanguage].modelId) {
+            console.log(block);
+            if (!languages[chosenLanguage].modelId && value && !block) {
                 playBlob(value);
             // if not English
-            } else {
+            } else if (languages[chosenLanguage].modelId && value && !block) {
                 translateAjax(value, function (response) {
                     var spanishText = response.translations[0].translation;
                     playBlob(spanishText); 
@@ -144,8 +147,13 @@ function playBlob(text)
         var objectUrl = window.URL.createObjectURL(blob);
         audio.src = objectUrl;
         var isPlaying = audio.currentTime > 0 && !audio.paused && !audio.ended && audio.readyState > 2;
-        if(!isPlaying) 
+        if(!isPlaying)
             audio.play();
+        block = true;
+        setTimeout(function () {
+            block = false;
+
+        }, waitTime);
     });
 }
 
@@ -157,7 +165,7 @@ function textToSpeechAjax(text, callback) {
         url: url,
         method: "GET",
         headers: {
-            "Authorization": "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==",
+            "Authorization": "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==",
             "output": "speech.wav",
             "Access-Control-Allow-Origin": "*"
         },
