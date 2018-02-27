@@ -34,6 +34,14 @@ var languages = {
     }
 };
 
+var isOn = false;
+
+chrome.storage.sync.get("isOn", function(items) {
+   isOn = items.isOn; 
+});
+
+
+
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
     if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob))))) {
@@ -181,84 +189,99 @@ var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE
 var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
-    var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
-    $.ajax({
-        url: url,
-        method: "GET",
-        headers: {
-            "Authorization": TEXT_TO_SPEECH_AUTH,
-            "output": "speech.wav",
-            "Access-Control-Allow-Origin": "*"
-        },
-        data: {
-            text: text
-        },
-        dataType: "binary",
-        responseType: "arraybuffer"
-    }).then(function (response) {
-        callback(response);
-    });
+    if(isOn)
+    {
+        var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
+        $.ajax({
+            url: url,
+            method: "GET",
+            headers: {
+                "Authorization": TEXT_TO_SPEECH_AUTH,
+                "output": "speech.wav",
+                "Access-Control-Allow-Origin": "*"
+            },
+            data: {
+                text: text
+            },
+            dataType: "binary",
+            responseType: "arraybuffer"
+        }).then(function (response) {
+            callback(response);
+        });
+    }
 };
 
 function translateAjax(text, callback) {
-    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate";
-    $.ajax({
-        url: url,
-        method: "GET",
-        headers: {
-            "Authorization": TRANSLATION_AUTH,
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        },
-        data: {
-            text: text,
-            model_id: languages[chosenLanguage].modelId
-        }
-    }).then(function (response) {
-        callback(response);
-    });
+    if(isOn)
+    {
+        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate";
+        $.ajax({
+            url: url,
+            method: "GET",
+            headers: {
+                "Authorization": TRANSLATION_AUTH,
+                "Accept": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            },
+            data: {
+                text: text,
+                model_id: languages[chosenLanguage].modelId
+            }
+        }).then(function (response) {
+            callback(response);
+        });
+    }
 };
 
 function getLanguagesAjax(callback) {
-    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identifiable_languages"
-    $.ajax({
-        url: url,
-        method: "GET",
-        headers: {
-            "Authorization": TRANSLATION_AUTH,
-            "Access-Control-Allow-Origin": "*"
-        }
-    }).then(function (response) {
-        callback(response.languages);
-    });
+    if(isOn)
+    {
+        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identifiable_languages"
+        $.ajax({
+            url: url,
+            method: "GET",
+            headers: {
+                "Authorization": TRANSLATION_AUTH,
+                "Access-Control-Allow-Origin": "*"
+            }
+        }).then(function (response) {
+            callback(response.languages);
+        });
+    }
 };
 
 function getLanguageModelsAjax(callback) {
-    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/models"
-    $.ajax({
-        url: url,
-        method: "GET",
-        headers: {
-            "Authorization": TRANSLATION_AUTH,
-            "Access-Control-Allow-Origin": "*"
-        }
-    }).then(function (response) {
-        callback(response.models);
-    });
+    if(isOn) 
+    {
+        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/models"
+        $.ajax({
+            url: url,
+            method: "GET",
+            headers: {
+                "Authorization": TRANSLATION_AUTH,
+                "Access-Control-Allow-Origin": "*"
+            }
+        }).then(function (response) {
+            callback(response.models);
+        });
+    }
 };
 
 function detectLanguageAjax(text, callback) {
-    var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
-    $.ajax({
-        url: url,
-        method: "POST",
-        headers: {
-            "Authorization": TRANSLATION_AUTH,
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type": "text/plain"
-        },
-        data: text
-    }).then(function (languageBestGuess) {
-        callback(languageBestGuess);
-    });
+    if(isOn) 
+    {
+        var url = "https://gateway.watsonplatform.net/language-translator/api/v2/identify"
+        $.ajax({
+            url: url,
+            method: "POST",
+            headers: {
+                "Authorization": TRANSLATION_AUTH,
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "text/plain"
+            },
+            data: text
+        }).then(function (languageBestGuess) {
+            callback(languageBestGuess);
+        });
+    }
 };
