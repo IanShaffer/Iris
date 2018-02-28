@@ -1,6 +1,9 @@
+
+// window variables
 var audio = new Audio();
 var block = false;
 var WAIT_TIME = 500;
+var googleTextToSpeech = false;
 var currentElement;
 var lastPlayedElement;
 var chosenLanguage = "english";
@@ -34,6 +37,7 @@ var languages = {
         voice: "ja-JP_EmiVoice"
     }
 };
+
 
 $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
     // check for conditions and support for blob / arraybuffer response type
@@ -75,7 +79,6 @@ $.ajaxTransport("+binary", function (options, originalOptions, jqXHR) {
         };
     }
 });
-
 
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
@@ -203,16 +206,26 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
+
+    // FREE GOOGLE API TEXT-TO-SPEECH
+
+    // var msg = new SpeechSynthesisUtterance(text);
+    // speechSynthesis.speak(msg);
+
+    // FREE GOOGLE API TEXT-TO-SPEECH
+
     chrome.storage.sync.get("isOn", function (items) {
         var isOn = items.isOn;
         // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
         if (!text || isOn === false) {
             return;
         }
+        // keep strings to length of 20 for testing so we don't exceed API limits
         if (text.length > 20)
         {
             text = text.substring(0,20);
         }
+        // if chosen language is not english, translate text to foreign language
         if (languages[chosenLanguage].modelId) {
             translateAjax(text, function (response) {
                 var spanishText = response.translations[0].translation;
@@ -225,6 +238,7 @@ function playBlob(text)
                         audio.play();
                 });
             });
+        // if english, don't translate
         } else {
             textToSpeechAjax(text, function (response) {
                 var blob = new Blob([response], { "type": "audio/wav" });
@@ -245,7 +259,7 @@ function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
-        method: "GET",
+        method: "POST",
         headers: {
             "Authorization": TEXT_TO_SPEECH_AUTH,
             "output": "speech.wav",
@@ -260,8 +274,8 @@ function textToSpeechAjax(text, callback) {
     }).then(function (response) {
         callback(response);
     }).fail(function (jqXHR, textStatus) {
-            console.log("jqXHR:",jqXHR);
-            console.log("textStatus:", textStatus);
+        console.log("jqXHR:", jqXHR);
+        console.log("textStatus:", textStatus);
     });
 };
 
@@ -327,3 +341,4 @@ function detectLanguageAjax(text, callback) {
         callback(languageBestGuess);
     });
 };
+
