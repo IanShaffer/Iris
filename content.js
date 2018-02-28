@@ -156,7 +156,11 @@ function playBlob(text)
         if (!text || isOn === false) {
             return;
         }
+<<<<<<< HEAD
         // keep strings to length of 20 for testing so we don't exceed API limits
+=======
+        text = text.replace(/[^a-zA-Z0-9 ]/g, '');
+>>>>>>> master
         if (text.length > 20)
         {
             text = text.substring(0,20);
