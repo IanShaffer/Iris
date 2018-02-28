@@ -61,26 +61,37 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             if (languages[chosenLanguage].modelId) {
                 translateAjax(text, function (response) {
                     var spanishText = response.translations[0].translation;
-                    textToSpeechAjax(spanishText, function (response) {
+                    // if watson API, then use watson text to speech API
+                    if (APIType === "WATSON") {
+                        textToSpeechAjax(spanishText, function (response) {
+                            var blob = new Blob([response], { "type": "audio/wav" });
+                            var objectUrl = window.URL.createObjectURL(blob);
+                            audio.src = objectUrl;
+                            audio.play();
+                        });
+                    // if google API, then use google text to speech API
+                    } else {
+                        var msg = new SpeechSynthesisUtterance(spanishText);
+                        speechSynthesis.cancel();
+                        speechSynthesis.speak(msg);
+                    }
+                });
+            // if english, don't translate
+            } else {
+                // if watson API, then use watson text to speech API
+                if (APIType === "WATSON") {
+                    textToSpeechAjax(text, function (response) {
                         var blob = new Blob([response], { "type": "audio/wav" });
                         var objectUrl = window.URL.createObjectURL(blob);
                         audio.src = objectUrl;
                         audio.play();
                     });
-                });
-            // if english, don't translate
-            } else if (APIType === "WATSON") {
-                textToSpeechAjax(text, function (response) {
-                    var blob = new Blob([response], { "type": "audio/wav" });
-                    var objectUrl = window.URL.createObjectURL(blob);
-                    audio.src = objectUrl;
-                    audio.play();
-                });
-            // if english and google API, then use google text to speech API
-            } else {
-                var msg = new SpeechSynthesisUtterance(text);
-                speechSynthesis.cancel();
-                speechSynthesis.speak(msg);
+                // if google API, then use google text to speech API
+                } else {
+                    var msg = new SpeechSynthesisUtterance(text);
+                    speechSynthesis.cancel();
+                    speechSynthesis.speak(msg);
+                }
             }
         });
     });
