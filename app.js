@@ -36,6 +36,17 @@ $(document).ready(function(){
         }); 
     });
 
+    chrome.storage.sync.get("APIType", function(items) {
+       var isWatson = items.APIType === "WATSON" ? true : false;
+        $("#isWatsonOrGoogle").attr("checked", isWatson); 
+    });
+
+    $("#isWatsonOrGoogle").change(function() {
+        var value = $("#isWatsonOrGoogle").is(":checked") ? "WATSON" : "GOOGLE";
+        chrome.storage.sync.set({"APIType":value}, function() { 
+        }); 
+    });
+
 
 
 })

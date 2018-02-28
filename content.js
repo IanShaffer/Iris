@@ -145,7 +145,11 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
-
+    var APIType; 
+    chrome.storage.sync.get("APIType", function(items) {
+        var APIType = items.APIType;
+    })
+    
     // FREE GOOGLE API TEXT-TO-SPEECH
 
     // var msg = new SpeechSynthesisUtterance(text);
