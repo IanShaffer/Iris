@@ -239,7 +239,7 @@ function playBlob(text)
     });
 }
 
-var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE3OnRVRTRyT3ZNSHVyWg==";
+var TEXT_TO_SPEECH_AUTH = "Basic NWEwMTM4ZDktMDMyNS00NzNkLWI4NTgtMzFhYzNhZmU3NzY1Onlva0F6Y3JkbDZHRA==";
 var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
