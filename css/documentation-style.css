@@ -9,6 +9,7 @@ body {
 
 .header {
     background-color: rgb(199, 221, 200);
+    border-bottom: 4pt solid rgba(80, 127, 113, 0.2);
 }
 
 .row {
@@ -78,29 +79,12 @@ ul {
 }
 
 /* Body CSS */
-/* .number {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 30px;
-}
-
-.section {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 50px;
-    margin-left: 20px;
-} */
 
 .section {
     position: relative;
     display: block;
     padding-top: 25px;
     padding-bottom: 25px;
-    height: 700px;
 }
 
 #section-intro {
@@ -129,8 +113,19 @@ ul {
 }
 
 .description {
-    color: rgb(80, 127, 113);
+    color: white;
     position: relative;
     display: block;
-    padding: 0px
+    padding: 0px;
+    background-color: rgba(80, 127, 113, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.title {
+    font-family: 'Sans Sara';
+    font-size: 50px;
+    margin: 40px auto 0 auto;
+    color: rgb(80, 127, 113);
+    text-align: center;
 }
