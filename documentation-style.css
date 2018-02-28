@@ -15,12 +15,17 @@ body {
     padding: 0 50px;
 }
 
+#iris-logo {
+    width: 150px;
+}
+
 #logo {
-    font-family: 'Sans Sara', cursive;
+    /* font-family: 'Sans Sara', cursive;
     position: relative;
     font-size: 75px;
     color:  rgb(80, 127, 113);
-    display: inline;
+    display: inline; */
+    padding: 15px 0;
 }
 
 ul {
@@ -99,9 +104,7 @@ ul {
 }
 
 #section-intro {
-    background-image: url("eye.png");
-    background-size: cover;
-    background-position: 0;
+    background-color: rgb(217, 236, 218);
 }
 
 #section-who {
