@@ -9,18 +9,24 @@ body {
 
 .header {
     background-color: rgb(199, 221, 200);
+    border-bottom: 4pt solid rgba(80, 127, 113, 0.2);
 }
 
 .row {
     padding: 0 50px;
 }
 
+#iris-logo {
+    width: 150px;
+}
+
 #logo {
-    font-family: 'Sans Sara', cursive;
+    /* font-family: 'Sans Sara', cursive;
     position: relative;
     font-size: 75px;
     color:  rgb(80, 127, 113);
-    display: inline;
+    display: inline; */
+    padding: 15px 0;
 }
 
 ul {
@@ -73,35 +79,16 @@ ul {
 }
 
 /* Body CSS */
-/* .number {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 30px;
-}
-
-.section {
-    color: rgb(80, 127, 113);
-    font-family: 'Sans Sara', cursive;
-    display: inline;
-    position: relative;
-    font-size: 50px;
-    margin-left: 20px;
-} */
 
 .section {
     position: relative;
     display: block;
     padding-top: 25px;
     padding-bottom: 25px;
-    height: 700px;
 }
 
 #section-intro {
-    background-image: url("eye.png");
-    background-size: cover;
-    background-position: 0;
+    background-color: rgb(217, 236, 218);
 }
 
 #section-who {
@@ -126,8 +113,19 @@ ul {
 }
 
 .description {
-    color: rgb(80, 127, 113);
+    color: white;
     position: relative;
     display: block;
-    padding: 0px
+    padding: 0px;
+    background-color: rgba(80, 127, 113, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.title {
+    font-family: 'Sans Sara';
+    font-size: 50px;
+    margin: 40px auto 0 auto;
+    color: rgb(80, 127, 113);
+    text-align: center;
 }
