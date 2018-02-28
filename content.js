@@ -135,6 +135,9 @@ for (var i = 0; i < elementsArray.length; i++) {
             }, WAIT_TIME);
             // let the browser know that this element is the most recently played element so its not replayed
             lastPlayedElement = element;
+            chrome.runtime.sendMessage({ greeting: "hello" }, function (response) {
+                //console.log(response.farewell);
+            });
             playBlob(value);
         }
     });
@@ -156,11 +159,7 @@ function playBlob(text)
         if (!text || isOn === false) {
             return;
         }
-<<<<<<< HEAD
         // keep strings to length of 20 for testing so we don't exceed API limits
-=======
-        text = text.replace(/[^a-zA-Z0-9 ]/g, '');
->>>>>>> master
         if (text.length > 20)
         {
             text = text.substring(0,20);
