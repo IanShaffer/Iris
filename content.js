@@ -203,6 +203,11 @@ for (var i = 0; i < elementsArray.length; i++) {
 
 function playBlob(text) 
 {
+    var APIType; 
+    chrome.storage.sync.get("APIType", function(items) {
+        var APIType = items.APIType;
+    })
+    
     chrome.storage.sync.get("isOn", function (items) {
         var isOn = items.isOn;
         // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
