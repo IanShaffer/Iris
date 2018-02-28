@@ -209,6 +209,7 @@ function playBlob(text)
         if (!text || isOn === false) {
             return;
         }
+        text = text.replace(/[^a-zA-Z0-9 ]/g, '');
         if (text.length > 20)
         {
             text = text.substring(0,20);
