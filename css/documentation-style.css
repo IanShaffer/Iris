@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Sans Sara';
-    src: url('sans-sara.ttf')
+    src: url('../sans-sara.ttf')
 }
 
 body {
@@ -8,19 +8,25 @@ body {
 }
 
 .header {
-    margin-top: 25px;
+    background-color: rgb(199, 221, 200);
+    border-bottom: 4pt solid rgba(80, 127, 113, 0.2);
 }
 
 .row {
     padding: 0 50px;
 }
 
+#iris-logo {
+    width: 150px;
+}
+
 #logo {
-    font-family: 'Sans Sara', cursive;
+    /* font-family: 'Sans Sara', cursive;
     position: relative;
     font-size: 75px;
     color:  rgb(80, 127, 113);
-    display: inline;
+    display: inline; */
+    padding: 15px 0;
 }
 
 ul {
@@ -65,6 +71,7 @@ ul {
 
 .menu-item a {
     padding-bottom: 2px;
+    /* transition: .2s; */
 }
 
 .menu-item a:hover {
@@ -72,18 +79,16 @@ ul {
 }
 
 /* Body CSS */
+
 .section {
     position: relative;
     display: block;
     padding-top: 25px;
     padding-bottom: 25px;
-    height: 700px;
 }
 
 #section-intro {
-    background-image: url("eye.png");
-    background-size: cover;
-    background-position: 0;
+    background-color: rgb(217, 236, 218);
 }
 
 #section-who {
@@ -108,51 +113,19 @@ ul {
 }
 
 .description {
-    color: rgb(80, 127, 113);
+    color: white;
     position: relative;
     display: block;
-    padding: 0px
+    padding: 0px;
+    background-color: rgba(80, 127, 113, 0.2);
+    padding: 20px;
+    border-radius: 10px;
 }
 
-.logo {
-    width: 350px;
-    margin: 0 auto;
-    position: relative;
-    text-align: center;
-    display: block;
-}
-
-.logo-holder {
-    position: relative;
-    margin-top: 100px;
-}
-
-.tagline {
-    font-family: 'Yellowtail', cursive;
-    color: rgb(80, 127, 113);
-    font-size: 30px;
-    margin: 0 auto;
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-}
-
-.download-button {
-    text-align: center;
-    margin-top: 55px;
-}
-
-.btn {
+.title {
     font-family: 'Sans Sara';
-    font-size: 25px;
-    background-color: rgb(80, 127, 113);
-    color: rgb(217, 236, 218);
-    border: 2pt solid rgb(80, 127, 113);
-    transition: .3s;
-}
-
-.btn:hover {
+    font-size: 50px;
+    margin: 40px auto 0 auto;
     color: rgb(80, 127, 113);
-    background-color: rgb(217, 236, 218);
-    border: 2pt solid rgb(80, 127, 113);
+    text-align: center;
 }
