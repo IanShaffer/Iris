@@ -13,8 +13,14 @@
             "js": ["jquery-3.3.1.js", "content.js"]
         }
     ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
     "permissions": [
-        "storage"
+        "storage",
+        "tabs"
     ],
     "web_accessible_resources": ["*.wav"]
 }
