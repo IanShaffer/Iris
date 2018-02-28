@@ -36,6 +36,7 @@ var languages = {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     var text = request.text;
+    var googleText = text;
     chrome.storage.sync.get(["isOn", "APIType"], function (items) {
         var isOn = items.isOn;
         if (items.APIType) {
@@ -88,7 +89,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                     });
                 // if google API, then use google text to speech API
                 } else {
-                    var msg = new SpeechSynthesisUtterance(text);
+                    var msg = new SpeechSynthesisUtterance(googleText);
                     speechSynthesis.cancel();
                     speechSynthesis.speak(msg);
                 }
