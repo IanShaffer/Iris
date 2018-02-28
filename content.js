@@ -238,6 +238,7 @@ var TEXT_TO_SPEECH_AUTH = "Basic YjZhM2YxNWUtMjhmNi00OTc4LTk1YWMtOTQwZjI3MGY4MTE
 var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
+    text = text.substring(0,20);
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
     $.ajax({
         url: url,
@@ -262,6 +263,7 @@ function textToSpeechAjax(text, callback) {
 };
 
 function translateAjax(text, callback) {
+    text = text.substring(0, 20);
     var url = "https://gateway.watsonplatform.net/language-translator/api/v2/translate";
     $.ajax({
         url: url,
