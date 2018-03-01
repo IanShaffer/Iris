@@ -54,6 +54,10 @@ for (var i = 0; i < elementsArray.length; i++) {
                         value += " text box input";
                     }
                     break;
+                case "BUTTON":
+                    value = element.value;
+                    value += " button";
+                    break;
                 case "DIV":
                     value = "";
                     break;
