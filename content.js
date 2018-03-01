@@ -43,44 +43,63 @@ for (var i = 0; i < elementsArray.length; i++) {
         var value = "";
         // update string to send to IBM API depending upon tag
         if (element && element.nodeName) {
-            switch(element.nodeName)
-            {
-                case "INPUT":
-                    value = element.value;
-                    if (element.type === "submit") {
-                        value += " button";
-                    } else if (element.type === "text") {
-                        value += " text box input";
-                    }
-                    break;
-                case "DIV":
-                    value = "";
-                    break;
-                case "A":
-                    if (element.innerText) {
-                        value = "Link to ";
-                        value += element.innerText;
-                    } else  if (element.href) {
-                        value = "Link to ";
-                        value += element.href;
-                    } else if (element.title) {
-                        value = "Link to ";
-                        value += element.title;
-                    } else {
-                        value = "Unknown link";
-                    }
-                    break;
-                case "H1","H2","H3","H4":
-                    value = element.innerText;
-                    value += " title";
-                    break;
-                case "IMG":
-                    value = element.innerText;
-                    value += "Image of " + element.alt;
-                    break;
-                default:
-                    value = element.innerText;
-            }
+        console.log(element.nodeName);
+        switch(element.nodeName)
+        {
+            case "INPUT":
+                value = element.value;
+                if (element.type === "submit") {
+                    value += " button";
+                } else if (element.type === "text") {
+                    value += " text box input";
+                }
+                break;
+            case "DIV":
+                value = "";
+                break;
+            case "A":
+                if (element.innerText) {
+                    value = "Link to ";
+                    value += element.innerText;
+                } else if (element.title) {
+                    value = "Link to ";
+                    value += element.title;
+                } else  if (element.href) {
+                    value = "Link to ";
+                    value += element.href;
+                } else {
+                    value = "Unknown link";
+                }
+                break;
+            case "H1":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H2":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H3":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H4":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "IMG":
+                value = element.innerText;
+                value += "Image of " + element.alt;
+                break;
+            case "UL":
+                value = "";
+                break;
+            case "OL":
+                value = "";
+                break;
+            default:
+                value = element.innerText;
+        } 
         }
         
         // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
