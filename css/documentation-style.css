@@ -117,7 +117,7 @@ ul {
     position: relative;
     display: block;
     padding: 0px;
-    background-color: rgba(80, 127, 113, 0.2);
+    background-color: rgb(80, 127, 113);
     padding: 20px;
     border-radius: 10px;
 }
