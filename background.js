@@ -3,6 +3,7 @@
 var APIType = "GOOGLE";
 var audio = new Audio();
 var chosenLanguage = "english";
+var CHARACTER_LIMIT = 200;
 var languages = {
     english: {
         modelId: undefined,
@@ -52,7 +53,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             }
             // keep strings to length of 20 for testing so we don't exceed API limits
             if (text.length > 20) {
-                text = text.substring(0, 20);
+                text = text.substring(0, CHARACTER_LIMIT);
             }
             // text = text.replace(/</g, ' less than symbol ');
             // text = text.replace(/>/g, ' greater than symbol ');
