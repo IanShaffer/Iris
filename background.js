@@ -3,6 +3,7 @@
 var APIType = "GOOGLE";
 var audio = new Audio();
 var chosenLanguage = "english";
+var CHARACTER_LIMIT = 200;
 var languages = {
     english: {
         modelId: undefined,
@@ -35,36 +36,57 @@ var languages = {
 };
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    var text = request.text;
-    var googleText = text;
-    chrome.storage.sync.get(["isOn", "APIType"], function (items) {
-        var isOn = items.isOn;
-        if (items.APIType) {
-            APIType = items.APIType;
-        }
-        // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
-        if (!text || isOn === false) {
-            return;
-        }
-        // keep strings to length of 20 for testing so we don't exceed API limits
-        if (text.length > 20) {
-            text = text.substring(0, 20);
-        }
-        text = text.replace(/</g, ' less than symbol ');
-        text = text.replace(/>/g, ' greater than symbol ');
-
-        chrome.storage.sync.get('language', function (items) {
-            if (items.language) {
-                chosenLanguage = items.language;
+    // if ` (back-tick key) cancel current audio play
+    if (request.key === 192) {
+        audio.pause();
+    } else if (request.text) {
+        var text = request.text;
+        var googleText = text;
+        chrome.storage.sync.get(["isOn", "APIType"], function (items) {
+            var isOn = items.isOn;
+            if (items.APIType) {
+                APIType = items.APIType;
             }
+            // only run ajax calls if we have a string to send and the app is turned on or isOn is undefined
+            if (!text || isOn === false) {
+                return;
+            }
+            // keep strings to length of 20 for testing so we don't exceed API limits
+            if (text.length > 20) {
+                text = text.substring(0, CHARACTER_LIMIT);
+            }
+            // text = text.replace(/</g, ' less than symbol ');
+            // text = text.replace(/>/g, ' greater than symbol ');
 
-            // if chosen language is not english, translate text to foreign language
-            if (languages[chosenLanguage].modelId) {
-                translateAjax(text, function (response) {
-                    var spanishText = response.translations[0].translation;
+            chrome.storage.sync.get('language', function (items) {
+                if (items.language) {
+                    chosenLanguage = items.language;
+                }
+
+                // if chosen language is not english, translate text to foreign language
+                if (languages[chosenLanguage].modelId) {
+                    translateAjax(text, function (response) {
+                        var spanishText = response.translations[0].translation;
+                        // if watson API, then use watson text to speech API
+                        if (APIType === "WATSON") {
+                            textToSpeechAjax(spanishText, function (response) {
+                                var blob = new Blob([response], { "type": "audio/wav" });
+                                var objectUrl = window.URL.createObjectURL(blob);
+                                audio.src = objectUrl;
+                                audio.play();
+                            });
+                        // if google API, then use google text to speech API
+                        } else {
+                            speechSynthesis.cancel();
+                            var msg = new SpeechSynthesisUtterance(spanishText);
+                            speechSynthesis.speak(msg);
+                        }
+                    });
+                // if english, don't translate
+                } else {
                     // if watson API, then use watson text to speech API
                     if (APIType === "WATSON") {
-                        textToSpeechAjax(spanishText, function (response) {
+                        textToSpeechAjax(text, function (response) {
                             var blob = new Blob([response], { "type": "audio/wav" });
                             var objectUrl = window.URL.createObjectURL(blob);
                             audio.src = objectUrl;
@@ -72,30 +94,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         });
                     // if google API, then use google text to speech API
                     } else {
-                        var msg = new SpeechSynthesisUtterance(spanishText);
                         speechSynthesis.cancel();
+                        var msg = new SpeechSynthesisUtterance(googleText);
                         speechSynthesis.speak(msg);
                     }
-                });
-            // if english, don't translate
-            } else {
-                // if watson API, then use watson text to speech API
-                if (APIType === "WATSON") {
-                    textToSpeechAjax(text, function (response) {
-                        var blob = new Blob([response], { "type": "audio/wav" });
-                        var objectUrl = window.URL.createObjectURL(blob);
-                        audio.src = objectUrl;
-                        audio.play();
-                    });
-                // if google API, then use google text to speech API
-                } else {
-                    var msg = new SpeechSynthesisUtterance(googleText);
-                    speechSynthesis.cancel();
-                    speechSynthesis.speak(msg);
                 }
-            }
+            });
         });
-    });
+    }
 });
 
 var TEXT_TO_SPEECH_AUTH = "Basic NWEwMTM4ZDktMDMyNS00NzNkLWI4NTgtMzFhYzNhZmU3NzY1Onlva0F6Y3JkbDZHRA==";

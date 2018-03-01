@@ -5,6 +5,18 @@ var WAIT_TIME = 500;
 var currentElement;
 var lastPlayedElement;
 
+document.addEventListener("keydown", function (e) {
+    var key = e.which;
+    // if ` (back-tick key) send a key message
+    if (key === 192) {
+        chrome.runtime.sendMessage({ key: key });
+    }
+    // if F7, send the url to be spoken
+    if (key === 118) {
+        chrome.runtime.sendMessage({ text: window.location.href });
+    }
+});
+
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
@@ -30,6 +42,7 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = element;
         var value = "";
         // update string to send to IBM API depending upon tag
+        if (element && element.nodeName) {
         console.log(element.nodeName);
         switch(element.nodeName)
         {
@@ -87,6 +100,7 @@ for (var i = 0; i < elementsArray.length; i++) {
             default:
                 value = element.innerText;
         } 
+        }
         
         // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
         if (block && value) {
