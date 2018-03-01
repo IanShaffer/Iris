@@ -5,6 +5,11 @@ var WAIT_TIME = 500;
 var currentElement;
 var lastPlayedElement;
 
+// document.addEventListener("bind", function (e) {
+//     console.log("hey");
+//     console.log(e);
+// });
+
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
     elementsArray[i].addEventListener("focus", function () {
@@ -18,6 +23,7 @@ for (var i = 0; i < elementsArray.length; i++) {
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
         var element = e.target;
+        console.log("test");
         // var childElement = element.firstElementChild;
         // if (childElement) {
         //     console.log("nope");
