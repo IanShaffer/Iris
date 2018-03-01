@@ -30,6 +30,7 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = element;
         var value = "";
         // update string to send to IBM API depending upon tag
+        console.log(element.nodeName);
         switch(element.nodeName)
         {
             case "INPUT":
@@ -47,23 +48,41 @@ for (var i = 0; i < elementsArray.length; i++) {
                 if (element.innerText) {
                     value = "Link to ";
                     value += element.innerText;
-                } else  if (element.href) {
-                    value = "Link to ";
-                    value += element.href;
                 } else if (element.title) {
                     value = "Link to ";
                     value += element.title;
+                } else  if (element.href) {
+                    value = "Link to ";
+                    value += element.href;
                 } else {
                     value = "Unknown link";
                 }
                 break;
-            case "H1","H2","H3","H4":
+            case "H1":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H2":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H3":
+                value = element.innerText;
+                value += " title";
+                break;
+            case "H4":
                 value = element.innerText;
                 value += " title";
                 break;
             case "IMG":
                 value = element.innerText;
                 value += "Image of " + element.alt;
+                break;
+            case "UL":
+                value = "";
+                break;
+            case "OL":
+                value = "";
                 break;
             default:
                 value = element.innerText;
