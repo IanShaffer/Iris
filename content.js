@@ -5,10 +5,17 @@ var WAIT_TIME = 500;
 var currentElement;
 var lastPlayedElement;
 
-// document.addEventListener("bind", function (e) {
-//     console.log("hey");
-//     console.log(e);
-// });
+document.addEventListener("keydown", function (e) {
+    var key = e.which;
+    // if ` (back-tick key) send a key message
+    if (key === 192) {
+        chrome.runtime.sendMessage({ key: key });
+    }
+    // if F7, send the url to be spoken
+    if (key === 118) {
+        chrome.runtime.sendMessage({ text: window.location.href });
+    }
+});
 
 var elementsArray = document.getElementsByTagName('*');
 for (var i = 0; i < elementsArray.length; i++) {
@@ -23,7 +30,6 @@ for (var i = 0; i < elementsArray.length; i++) {
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
         var element = e.target;
-        console.log("test");
         // var childElement = element.firstElementChild;
         // if (childElement) {
         //     console.log("nope");
@@ -36,44 +42,46 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = element;
         var value = "";
         // update string to send to IBM API depending upon tag
-        switch(element.nodeName)
-        {
-            case "INPUT":
-                value = element.value;
-                if (element.type === "submit") {
-                    value += " button";
-                } else if (element.type === "text") {
-                    value += " text box input";
-                }
-                break;
-            case "DIV":
-                value = "";
-                break;
-            case "A":
-                if (element.innerText) {
-                    value = "Link to ";
-                    value += element.innerText;
-                } else  if (element.href) {
-                    value = "Link to ";
-                    value += element.href;
-                } else if (element.title) {
-                    value = "Link to ";
-                    value += element.title;
-                } else {
-                    value = "Unknown link";
-                }
-                break;
-            case "H1","H2","H3","H4":
-                value = element.innerText;
-                value += " title";
-                break;
-            case "IMG":
-                value = element.innerText;
-                value += "Image of " + element.alt;
-                break;
-            default:
-                value = element.innerText;
-        } 
+        if (element && element.nodeName) {
+            switch(element.nodeName)
+            {
+                case "INPUT":
+                    value = element.value;
+                    if (element.type === "submit") {
+                        value += " button";
+                    } else if (element.type === "text") {
+                        value += " text box input";
+                    }
+                    break;
+                case "DIV":
+                    value = "";
+                    break;
+                case "A":
+                    if (element.innerText) {
+                        value = "Link to ";
+                        value += element.innerText;
+                    } else  if (element.href) {
+                        value = "Link to ";
+                        value += element.href;
+                    } else if (element.title) {
+                        value = "Link to ";
+                        value += element.title;
+                    } else {
+                        value = "Unknown link";
+                    }
+                    break;
+                case "H1","H2","H3","H4":
+                    value = element.innerText;
+                    value += " title";
+                    break;
+                case "IMG":
+                    value = element.innerText;
+                    value += "Image of " + element.alt;
+                    break;
+                default:
+                    value = element.innerText;
+            }
+        }
         
         // if a sound has started playing within the WAIT_TIME interval, then queue up the current event
         if (block && value) {
