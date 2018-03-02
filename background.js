@@ -104,8 +104,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
 });
 
-var TEXT_TO_SPEECH_AUTH = "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==";
-var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
+var TEXT_TO_SPEECH_AUTH = "Basic MjEyOTY2ZTItODczNS00OWNjLTk5ODEtNzhmZDZhMzQyZjA1Om0xeFRocmMxRm1MSg==";
+var TRANSLATION_AUTH = "Basic YzM4Mzk3Y2QtZTE5YS00M2FlLWJmNDEtMzc3YjRlMjc2NGIzOkFwNkpsN3daS1FFRA==";
 
 function textToSpeechAjax(text, callback) {
     var url = "https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?accept=audio/wav&voice=" + languages[chosenLanguage].voice;
