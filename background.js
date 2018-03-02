@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // if ` (back-tick key) cancel current audio play
     if (request.key === 192) {
         audio.pause();
+        speechSynthesis.cancel();
     } else if (request.text) {
         var text = request.text;
         var googleText = text;
