@@ -29,12 +29,7 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = "";
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
-        var element = e.target;
-        // var childElement = element.firstElementChild;
-        // if (childElement) {
-        //     console.log("nope");
-        //     return;
-        // }
+        //var element = e.target;
         // the following x and y method prevents the double speak on elements inside of elements
         var x = e.clientX;
         var y = e.clientY;
@@ -53,6 +48,10 @@ for (var i = 0; i < elementsArray.length; i++) {
                         value += " text box input";
                     }
                     break;
+                case "BUTTON":
+                    value = element.value;
+                    value += " button";
+                    break;
                 case "DIV":
                     value = "";
                     break;
@@ -60,23 +59,47 @@ for (var i = 0; i < elementsArray.length; i++) {
                     if (element.innerText) {
                         value = "Link to ";
                         value += element.innerText;
-                    } else  if (element.href) {
-                        value = "Link to ";
-                        value += element.href;
                     } else if (element.title) {
                         value = "Link to ";
                         value += element.title;
+                    } else  if (element.href) {
+                        value = "Link to ";
+                        value += element.href;
                     } else {
                         value = "Unknown link";
                     }
                     break;
-                case "H1","H2","H3","H4":
+                case "H1":
+                    value = element.innerText;
+                    value += " title";
+                    break;
+                case "H2":
+                    value = element.innerText;
+                    value += " title";
+                    break;
+                case "H3":
+                    value = element.innerText;
+                    value += " title";
+                    break;
+                case "H4":
                     value = element.innerText;
                     value += " title";
                     break;
                 case "IMG":
                     value = element.innerText;
                     value += "Image of " + element.alt;
+                    break;
+                case "UL":
+                    value = "";
+                    break;
+                case "OL":
+                    value = "";
+                    break;
+                case "HTML":
+                    value = "";
+                    break;
+                case "BODY":
+                    value = "";
                     break;
                 default:
                     value = element.innerText;
@@ -90,7 +113,6 @@ for (var i = 0; i < elementsArray.length; i++) {
                 if (currentElement === element) {
                     // if the current queued event is not blocked by a previously queued event and its not repeating the last played element
                     if (!block && element !== lastPlayedElement) {
-                        console.log("Element:", element);
                         // block further events for the WAIT_TIME interval (the blocked events will be queued)
                         block = true;
                         // unblock events after WAIT_TIME interval
@@ -105,7 +127,6 @@ for (var i = 0; i < elementsArray.length; i++) {
             }, WAIT_TIME);
         // if no sound has been played in the last WAIT_TIME amount of time
         } else if (value) {
-            console.log("Element:", element);
             // block further events for the WAIT_TIME interval (the blocked events will be queued)
             block = true;
             // unblock events after WAIT_TIME interval

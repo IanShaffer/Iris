@@ -66,11 +66,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 // if chosen language is not english, translate text to foreign language
                 if (languages[chosenLanguage].modelId) {
                     translateAjax(text, function (response) {
-                        var spanishText = response.translations[0].translation;
-                        console.log(spanishText);
+                        var translatedText = response.translations[0].translation;
                         // if watson API, then use watson text to speech API
                         if (APIType === "WATSON") {
-                            textToSpeechAjax(spanishText, function (response) {
+                            textToSpeechAjax(translatedText, function (response) {
                                 var blob = new Blob([response], { "type": "audio/wav" });
                                 var objectUrl = window.URL.createObjectURL(blob);
                                 audio.src = objectUrl;
@@ -79,7 +78,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         // if google API, then use google text to speech API
                         } else {
                             speechSynthesis.cancel();
-                            var msg = new SpeechSynthesisUtterance(spanishText);
+                            var msg = new SpeechSynthesisUtterance(translatedText);
                             speechSynthesis.speak(msg);
                         }
                     });
@@ -105,7 +104,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
 });
 
-var TEXT_TO_SPEECH_AUTH = "Basic NWEwMTM4ZDktMDMyNS00NzNkLWI4NTgtMzFhYzNhZmU3NzY1Onlva0F6Y3JkbDZHRA==";
+var TEXT_TO_SPEECH_AUTH = "Basic MjEyOTY2ZTItODczNS00OWNjLTk5ODEtNzhmZDZhMzQyZjA1Om0xeFRocmMxRm1MSg==";
 var TRANSLATION_AUTH = "Basic M2VhMWQwOTctZDRhZS00MzAwLTllN2MtNGQ1MmQ1ZGRmNWNjOkxwQ2RUWGdyUU02Vg==";
 
 function textToSpeechAjax(text, callback) {
