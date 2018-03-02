@@ -67,6 +67,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 if (languages[chosenLanguage].modelId) {
                     translateAjax(text, function (response) {
                         var spanishText = response.translations[0].translation;
+                        console.log(spanishText);
                         // if watson API, then use watson text to speech API
                         if (APIType === "WATSON") {
                             textToSpeechAjax(spanishText, function (response) {
