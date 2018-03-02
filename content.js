@@ -29,12 +29,7 @@ for (var i = 0; i < elementsArray.length; i++) {
         currentElement = "";
     });
     elementsArray[i].addEventListener("mouseover", function (e) {
-        var element = e.target;
-        // var childElement = element.firstElementChild;
-        // if (childElement) {
-        //     console.log("nope");
-        //     return;
-        // }
+        //var element = e.target;
         // the following x and y method prevents the double speak on elements inside of elements
         var x = e.clientX;
         var y = e.clientY;
@@ -43,7 +38,6 @@ for (var i = 0; i < elementsArray.length; i++) {
         var value = "";
         // update string to send to IBM API depending upon tag
         if (element && element.nodeName) {
-            console.log(element.nodeName);
             switch(element.nodeName)
             {
                 case "INPUT":
@@ -119,7 +113,6 @@ for (var i = 0; i < elementsArray.length; i++) {
                 if (currentElement === element) {
                     // if the current queued event is not blocked by a previously queued event and its not repeating the last played element
                     if (!block && element !== lastPlayedElement) {
-                        console.log("Element:", element);
                         // block further events for the WAIT_TIME interval (the blocked events will be queued)
                         block = true;
                         // unblock events after WAIT_TIME interval
@@ -134,7 +127,6 @@ for (var i = 0; i < elementsArray.length; i++) {
             }, WAIT_TIME);
         // if no sound has been played in the last WAIT_TIME amount of time
         } else if (value) {
-            console.log("Element:", element);
             // block further events for the WAIT_TIME interval (the blocked events will be queued)
             block = true;
             // unblock events after WAIT_TIME interval
